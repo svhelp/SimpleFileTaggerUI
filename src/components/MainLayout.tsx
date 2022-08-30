@@ -1,3 +1,17 @@
+import { useGetTagsQuery } from "api/sftApi"
+
 export const MainLayout = () => {
-  return <div>Main layout</div>
+
+  const { data } = useGetTagsQuery('')
+  
+  return <div>
+    <h1>
+      Tags:
+    </h1>
+    {data?.map(tag => (
+      <div>
+        {tag.name}
+      </div>
+    ))}
+  </div>
 }

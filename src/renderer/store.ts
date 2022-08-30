@@ -1,10 +1,14 @@
 import { configureStore } from '@reduxjs/toolkit'
+import { sftApi } from 'api/sftApi'
 import mainLayoutReducer from 'components/logic/slice'
 
 export const store = configureStore({
   reducer: {
+    [sftApi.reducerPath]: sftApi.reducer,
     mainLayoutReducer,
   },
+  middleware: getDefaultMiddleware => 
+    getDefaultMiddleware().concat(sftApi.middleware)
 })
 
 // Infer the `RootState` and `AppDispatch` types from the store itself
