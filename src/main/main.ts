@@ -113,6 +113,22 @@ const createWindow = async () => {
   new AppUpdater();
 };
 
+const runCoreServer = () => {
+  const { execFile } = require('node:child_process');
+  const controller = new AbortController();
+  const { signal } = controller;
+  execFile('sftserver.exe', ['--urls','http://localhost:9366'], { signal }, (error: string) => {
+    if (error) {
+      throw error;
+    }
+  });
+  //controller.abort();
+}
+
+if (!isDebug) {
+  runCoreServer();
+}
+
 /**
  * Add event listeners...
  */

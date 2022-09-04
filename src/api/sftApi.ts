@@ -8,7 +8,7 @@ import { UpdateTagsCommandModel } from "domain/UpdateTagsCommandModel";
 export const sftApi = createApi({
     reducerPath: 'sftApi',
     baseQuery: fetchBaseQuery({
-      baseUrl: 'http://localhost:5112/api/',
+      baseUrl: 'http://localhost:9366/api/',
     }),
     endpoints: (build) => ({
         getTags: build.query<TagModel[], string>({
