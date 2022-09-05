@@ -12,7 +12,7 @@ export const sftApi = createApi({
     }),
     endpoints: (build) => ({
         getTags: build.query<TagModel[], string>({
-            query: () => ({ url: `tag/` }),
+            query: () => ({ url: `tag/get` }),
         }),
         createTag: build.query<void, SimpleNamedModel>({
             query: (payload) => ({
@@ -39,6 +39,9 @@ export const sftApi = createApi({
                   'Content-type': 'application/json; charset=UTF-8',
                 },
               }),
+        }),
+        getLocations: build.query<TaggerDirectoryInfo[], string>({
+            query: () => ({ url: `location/all` }),
         }),
         getLocationTags: build.query<TaggerDirectoryInfo, string>({
             query: (payload) => ({ url: `location/get?path=${payload}` }),
@@ -80,6 +83,7 @@ export const {
     useGetTagsQuery,
     useAddLocationTagsQuery,
     useCreateTagQuery, 
+    useGetLocationsQuery,
     useGetLocationTagsQuery,
     useMergeTagsQuery, 
     useSetLocationTagsQuery, 

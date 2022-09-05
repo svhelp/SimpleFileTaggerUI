@@ -4,14 +4,14 @@ import { TagModel } from "domain/TagModel";
 import styled from 'styled-components'
 
 export const TagsPage = () => {
-    const { data, isLoading, isError, error } = useGetTagsQuery('');
+    const { data, isFetching, isError, error } = useGetTagsQuery('');
 
     return <div>
         <h1>
             Tags page       
         </h1>
 
-        {isLoading && <Skeleton.Image active />}
+        {isFetching && <Skeleton.Image active />}
 
         {isError && <Alert
             message="Error"
