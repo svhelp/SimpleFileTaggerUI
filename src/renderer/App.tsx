@@ -10,9 +10,9 @@ export default function App() {
     <Router>
       <Routes>
         <Route path="/" element={<MainLayout />}>
-          <Route path="locations" element={<LocationsPage />} />
-          <Route path="tags" element={<TagsPage />} />
-          <Route path="settings" element={<SettingsPage />} />
+          <Route path="locations/*" element={<LocationsPage />} />
+          <Route path="tags/" element={<TagsPage />} />
+          <Route path="settings/" element={<SettingsPage />} />
           <Route index element={<SettingsPage />} />
         </Route>
       </Routes>

@@ -1,15 +1,18 @@
-import { Alert, Card, Skeleton } from "antd";
+import { Alert, Skeleton } from "antd";
 import Search from "antd/lib/input/Search";
 import { useGetLocationsQuery, useGetLocationTagsQuery } from "api/sftApi";
-import { TaggerDirectoryInfo } from "domain/TaggerDirectoryInfo";
-import { TagModel } from "domain/TagModel";
 import { useState } from "react";
+import { useLocation } from "react-router-dom";
+import { LocationsBreadCrumb } from "./LocationsBreadCrumb";
+import { LocationContent } from "./LocationContent";
 
 export const LocationsPage = () => {
     const [ locationPath, setLocationPath ] = useState('');
 
     const { data, isFetching, isError, error } = useGetLocationsQuery('');
     //const { data, isFetching, isError, error } = useGetLocationTagsQuery(locationPath);
+
+    const currentLocation = useLocation();
     
     return (
         <div>
@@ -26,52 +29,19 @@ export const LocationsPage = () => {
                 showIcon />}
 
             <div>
-                <Search 
+                {data && 
+                    <>
+                        <LocationsBreadCrumb />
+                        <LocationContent locations={data} />
+                    </>}
+                {/* <Search 
                     onSearch={setLocationPath}
                     placeholder="Input location path" 
                     enterButton="Search"
                     size="large"
                     disabled={isFetching}
-                    loading={isFetching} />
-                {data && <LocationContent location={{path: '', children: data, tags: []}} />}
+                    loading={isFetching} /> */}
             </div>
         </div>
-    )
-}
-
-interface ILocationContentProps {
-    location: TaggerDirectoryInfo
-}
-
-const LocationContent = ({ location }: ILocationContentProps) => {
-    return (
-        <div>
-            {location.children.map(l => <LocationCard location={l} />)}
-            {location.tags.map(t => <LocationTagCard tag={t} />)}
-        </div>
-    )
-}
-
-const LocationCard = ({ location }: ILocationContentProps) => {
-    return (
-        <Card>
-            <p>
-                {location.path}
-            </p>
-        </Card>
-    )
-}
-
-interface ILocationTagCardProps {
-    tag: TagModel
-}
-
-const LocationTagCard = ({tag}: ILocationTagCardProps) => {
-    return (
-        <Card>
-            <p>
-                {tag.name}
-            </p>
-        </Card>
     )
 }

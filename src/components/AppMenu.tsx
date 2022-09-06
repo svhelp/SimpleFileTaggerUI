@@ -12,7 +12,7 @@ interface IItemClickedProps {
 }
 
 export const AppMenu = () => {
-    let navigate = useNavigate();
+    const navigate = useNavigate();
     
     const items: IMenuItem[] = [
         { label: 'Locations', key: 'locations' },
