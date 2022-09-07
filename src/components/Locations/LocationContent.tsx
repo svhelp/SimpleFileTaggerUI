@@ -2,6 +2,8 @@ import { TaggerDirectoryInfo } from "domain/TaggerDirectoryInfo";
 import { useLocation } from "react-router-dom";
 import { LocationTagCard } from "./LocationTagCard";
 import { LocationCard } from "./LocationCard";
+import styled from "styled-components";
+import { Space } from "antd";
 
 interface ILocationContentProps {
     locations: TaggerDirectoryInfo[];
@@ -20,10 +22,27 @@ export const LocationContent = ({ locations }: ILocationContentProps) => {
     });
 
     return (
-        <div>
-            {location.children.map(l => <LocationCard location={l} />)}
-            {location.tags.map(t => <LocationTagCard tag={t} />)}
-        </div>
+        <>
+            {location.children.length > 0 &&
+                <>
+                    <LocationSubheader>
+                        Locations
+                    </LocationSubheader>
+                    <Space wrap>
+                        {location.children.map(l => <LocationCard key={l.path} location={l} />)}
+                    </Space>
+                </>}
+
+            {location.tags.length > 0 &&
+                <>
+                    <LocationSubheader>
+                        Tags
+                    </LocationSubheader>
+                    <Space wrap>
+                        {location.tags.map(t => <LocationTagCard key={t.id} tag={t} />)}
+                    </Space>
+                </>}
+        </>
     );
 };
 
@@ -39,3 +58,10 @@ const getTargetLocation = (pathSnippets: string[], location?: TaggerDirectoryInf
     const levelName = pathSnippets[0];
     return getTargetLocation(pathSnippets.slice(1), location.children.find(l => l.name === levelName));
 };
+
+const LocationSubheader = styled.h2`
+    position: sticky;
+    top: 0;
+    background: #f0f2f5;
+    z-index: 2;
+`

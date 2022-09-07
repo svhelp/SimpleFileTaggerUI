@@ -1,14 +1,16 @@
 import { Layout } from "antd"
 import { Content } from "antd/lib/layout/layout"
 import Sider from "antd/lib/layout/Sider"
-import { Outlet, useLocation } from "react-router-dom"
+import { Outlet } from "react-router-dom"
 import { AppMenu } from "./AppMenu"
 
 export const MainLayout = () => {
-  let location = useLocation();
-
   return (
-    <Layout hasSider>
+    <Layout hasSider
+      style={{
+        height: '100vh',
+        overflow: 'hidden',
+      }}>
       <Sider
         style={{
           overflow: 'auto',
@@ -17,12 +19,10 @@ export const MainLayout = () => {
           left: 0,
           top: 0,
           bottom: 0,
+          background: '#fff'
         }}
       >
         <AppMenu />
-        <div>
-          {location.pathname}
-        </div>
       </Sider>
       <Layout style={{ marginLeft: 200 }}>
         <Content

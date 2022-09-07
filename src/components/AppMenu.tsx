@@ -15,8 +15,10 @@ export const AppMenu = () => {
     const navigate = useNavigate();
     
     const items: IMenuItem[] = [
+        { label: 'Search', key: '' },
         { label: 'Locations', key: 'locations' },
         { label: 'Tags', key: 'tags' },
+        { label: 'Groups', key: 'groups' },
         { label: 'Settings', key: 'settings', },
     ]
 

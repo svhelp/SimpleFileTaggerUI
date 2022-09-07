@@ -1,5 +1,6 @@
 import { Card } from "antd";
 import { TagModel } from "domain/TagModel";
+import styled from "styled-components";
 
 interface ILocationTagCardProps {
     tag: TagModel;
@@ -7,10 +8,21 @@ interface ILocationTagCardProps {
 
 export const LocationTagCard = ({ tag }: ILocationTagCardProps) => {
     return (
-        <Card>
+        <CardContainer>
             <p>
                 {tag.name}
             </p>
-        </Card>
+        </CardContainer>
     );
 };
+
+const CardContainer = styled(Card)`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    width: 200px;
+    height: 120px;
+
+    cursor: pointer;
+`
