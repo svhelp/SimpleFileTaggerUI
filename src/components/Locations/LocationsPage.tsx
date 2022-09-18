@@ -16,7 +16,11 @@ export const LocationsPage = () => {
     const currentLocation = useLocation();
     
     return (
-        <LocationPageContainer>            
+        <LocationPageContainer>
+            <BreadcrumbContainer>
+                <LocationsBreadCrumb />
+            </BreadcrumbContainer>
+            <ContentContainer>
             {isFetching && <Skeleton.Image active />}
 
             {isError && <Alert
@@ -25,15 +29,11 @@ export const LocationsPage = () => {
                 type="error"
                 showIcon />}
 
-            {data && 
-                <>
-                    <BreadcrumbContainer>
-                        <LocationsBreadCrumb />
-                    </BreadcrumbContainer>
-                    <ContentContainer>
-                        <LocationContent locations={data} />
-                    </ContentContainer>
-                </>}
+            {data &&
+                <LocationContent locations={data} />}
+                
+            </ContentContainer>
+
             <div>
                 {/* <Search 
                     onSearch={setLocationPath}
