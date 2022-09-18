@@ -2,7 +2,10 @@ import { emptySplitApi as api } from '../emptyApi';
 const injectedRtkApi = api.injectEndpoints({
   endpoints: (build) => ({
     searchGet: build.query<SearchGetApiResponse, SearchGetApiArg>({
-      query: (queryArg) => ({ url: `/api/Search/Get`, body: queryArg.body }),
+      query: (queryArg) => ({
+        url: `/api/Search/Get`,
+        params: { tags: queryArg.tags },
+      }),
     }),
   }),
   overrideExisting: false,
@@ -10,7 +13,7 @@ const injectedRtkApi = api.injectEndpoints({
 export { injectedRtkApi as enhancedApi };
 export type SearchGetApiResponse = /** status 200  */ TaggerDirectoryInfo[];
 export type SearchGetApiArg = {
-  body: string[];
+  tags?: string[];
 };
 export type ModelBase = {
   id: string;
@@ -27,15 +30,10 @@ export type TagModel = ModelBase & {
   group: TagGroupModel;
   thumbnail: ThumbnailModel;
 };
-export type SimpleModel = {
-  id: string;
-  name: string;
-};
 export type TaggerDirectoryInfo = ModelBase & {
   path: string;
   name: string;
   children: TaggerDirectoryInfo[];
   tags: TagModel[];
-  groups: SimpleModel[];
 };
 export const { useSearchGetQuery } = injectedRtkApi;

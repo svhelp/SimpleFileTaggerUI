@@ -93,20 +93,19 @@ export type TagModel = ModelBase & {
   group: TagGroupModel;
   thumbnail: ThumbnailModel;
 };
-export type SimpleModel = {
-  id: string;
-  name: string;
-};
 export type TaggerDirectoryInfo = ModelBase & {
   path: string;
   name: string;
   children: TaggerDirectoryInfo[];
   tags: TagModel[];
-  groups: SimpleModel[];
 };
 export type CommandResult = {
   isSuccessful: boolean;
   message: string;
+};
+export type SimpleModel = {
+  id: string;
+  name: string;
 };
 export type UpdateLocationCommandResultModel = ModelBase & {
   path: string;
