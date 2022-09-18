@@ -1,5 +1,5 @@
 import { TaggerDirectoryInfo } from "api/partial/location";
-import { CardContainer } from "components/Common/CardContainer";
+import { LocationCardContainer } from "components/Common/CardContainer";
 import { useCallback } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
@@ -16,10 +16,10 @@ export const LocationCard = ({ location }: ILocationCardProps) => {
     }, [navigate]);
 
     return (
-        <CardContainer onClick={onTabClick}>
+        <LocationCardContainer onClick={onTabClick}>
             <p>
                 {location.name}
             </p>
-        </CardContainer>
+        </LocationCardContainer>
     );
 };

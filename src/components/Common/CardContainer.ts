@@ -1,7 +1,7 @@
 import { Card } from "antd";
 import styled from "styled-components";
 
-export const CardContainer = styled(Card)`
+export const LocationCardContainer = styled(Card)`
     width: 200px;
     height: 120px;
 

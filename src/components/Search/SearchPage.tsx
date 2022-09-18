@@ -1,7 +1,7 @@
-import { Alert, Skeleton } from "antd";
+import { Alert, Skeleton, Space } from "antd";
 import Search from "antd/lib/input/Search"
 import { TaggerDirectoryInfo, useSearchGetQuery } from "api/partial/search";
-import { CardContainer } from "components/Common/CardContainer";
+import { LocationCardContainer } from "components/Common/CardContainer";
 import { useCallback, useState } from "react";
 import styled from "styled-components"
 
@@ -19,14 +19,10 @@ export const SearchPage = () => {
 
     return (
         <SearchPageContainer>
-            <h1>
-                Search
-            </h1>
-            
             <SearchContainer>
                 <Search 
                     onSearch={parseSearchValues}
-                    placeholder="Input location path" 
+                    placeholder="Input tags" 
                     enterButton="Search"
                     size="large"
                     disabled={isFetching}
@@ -42,7 +38,10 @@ export const SearchPage = () => {
                     showIcon />}
 
                 {data &&
-                    data.map(loc => <LocationCard key={loc.id} location={loc} openDirectory={openDirectory} />)}
+                    <Space wrap>
+                        {data.map(loc =>
+                            <LocationCard key={loc.id} location={loc} openDirectory={openDirectory} />)}
+                    </Space>}
             </ContentContainer>
         </SearchPageContainer>
     )
@@ -69,10 +68,10 @@ interface ILocationCardProps {
 
 export const LocationCard = ({ location, openDirectory }: ILocationCardProps) => {
     return (
-        <CardContainer onClick={() => openDirectory(location.path)}>
+        <LocationCardContainer onClick={() => openDirectory(location.path)}>
             <p>
                 {location.name}
             </p>
-        </CardContainer>
+        </LocationCardContainer>
     );
 };
