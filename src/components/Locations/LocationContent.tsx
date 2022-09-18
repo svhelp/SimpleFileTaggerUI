@@ -1,9 +1,9 @@
-import { TaggerDirectoryInfo } from "domain/TaggerDirectoryInfo";
 import { useLocation } from "react-router-dom";
 import { LocationTagCard } from "./LocationTagCard";
 import { LocationCard } from "./LocationCard";
 import styled from "styled-components";
 import { Space } from "antd";
+import { TaggerDirectoryInfo } from "api/partial/location";
 
 interface ILocationContentProps {
     locations: TaggerDirectoryInfo[];
@@ -15,10 +15,12 @@ export const LocationContent = ({ locations }: ILocationContentProps) => {
     const pathSnippets = path.pathname.split('/').filter(i => i).slice(1);
 
     const location = getTargetLocation(pathSnippets, {
+        id: '',
         path: '',
         name: '',
         children: locations || [],
         tags: [],
+        groups: []
     });
 
     return (

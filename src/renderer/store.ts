@@ -1,17 +1,14 @@
 import { configureStore } from '@reduxjs/toolkit'
 import { emptySplitApi } from 'api/emptyApi'
-import { sftApi } from 'api/sftApi'
 import mainLayoutReducer from 'components/logic/slice'
 
 export const store = configureStore({
   reducer: {
-    [sftApi.reducerPath]: sftApi.reducer,
     [emptySplitApi.reducerPath]: emptySplitApi.reducer,
     mainLayoutReducer,
   },
   middleware: getDefaultMiddleware => 
     getDefaultMiddleware()
-      .concat(sftApi.middleware)
       .concat(emptySplitApi.middleware)
 })
 

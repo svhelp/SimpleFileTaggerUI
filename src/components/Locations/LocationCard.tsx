@@ -1,5 +1,5 @@
 import { Card } from "antd";
-import { TaggerDirectoryInfo } from "domain/TaggerDirectoryInfo";
+import { TaggerDirectoryInfo } from "api/partial/location";
 import { useCallback } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import styled from "styled-components";

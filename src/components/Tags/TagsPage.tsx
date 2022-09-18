@@ -1,10 +1,9 @@
 import { Alert, Card, Skeleton } from "antd";
-import { useGetTagsQuery } from "api/sftApi"
-import { TagModel } from "domain/TagModel";
+import { TagModel, useTagGetQuery } from "api/partial/tag";
 import styled from 'styled-components'
 
 export const TagsPage = () => {
-    const { data, isFetching, isError, error } = useGetTagsQuery('');
+    const { data, isFetching, isError, error } = useTagGetQuery();
 
     return <div>
         <h1>

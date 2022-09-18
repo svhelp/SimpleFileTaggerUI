@@ -1,5 +1,5 @@
 import { Card } from "antd";
-import { TagModel } from "domain/TagModel";
+import { TagModel } from "api/partial/location";
 import styled from "styled-components";
 
 interface ILocationTagCardProps {

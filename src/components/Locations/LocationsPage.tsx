@@ -1,16 +1,16 @@
 import { Alert, Skeleton } from "antd";
 import Search from "antd/lib/input/Search";
-import { useGetLocationsQuery, useGetLocationTagsQuery } from "api/sftApi";
 import { useState } from "react";
 import { useLocation } from "react-router-dom";
 import { LocationsBreadCrumb } from "./LocationsBreadCrumb";
 import { LocationContent } from "./LocationContent";
 import styled from "styled-components";
+import { useLocationAllQuery } from "api/partial/location";
 
 export const LocationsPage = () => {
     const [ locationPath, setLocationPath ] = useState('');
 
-    const { data, isFetching, isError, error } = useGetLocationsQuery('');
+    const { data, isFetching, isError, error } = useLocationAllQuery();
     //const { data, isFetching, isError, error } = useGetLocationTagsQuery(locationPath);
 
     const currentLocation = useLocation();
