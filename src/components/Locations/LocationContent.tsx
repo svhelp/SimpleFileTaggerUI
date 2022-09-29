@@ -2,8 +2,11 @@ import { useLocation } from "react-router-dom";
 import { LocationCard } from "./LocationCard";
 import styled from "styled-components";
 import { Space } from "antd";
-import { TaggerDirectoryInfo } from "api/partial/location";
+import { TaggerDirectoryInfo, useLocationAddTagsMutation } from "api/partial/location";
 import { TagContainer } from "components/Common/Tag/TagContainer";
+import { NewCard } from "components/Common/NewCard/NewCard";
+import { useState } from "react";
+import { BindTagModal } from "./BindTagModal";
 
 interface ILocationContentProps {
     locations: TaggerDirectoryInfo[];
@@ -11,6 +14,7 @@ interface ILocationContentProps {
 
 export const LocationContent = ({ locations }: ILocationContentProps) => {
     const path = useLocation();
+    const [ isAddingTag, setIsAddingTag ] = useState(false);
 
     const pathSnippets = path.pathname.split('/').filter(i => i).slice(1);
 
@@ -22,6 +26,8 @@ export const LocationContent = ({ locations }: ILocationContentProps) => {
         tags: [],
     });
 
+    const [ addTag, {} ] = useLocationAddTagsMutation();
+
     return (
         <>
             {location.children.length > 0 &&
@@ -30,7 +36,8 @@ export const LocationContent = ({ locations }: ILocationContentProps) => {
                         Locations
                     </LocationSubheader>
                     <Space wrap>
-                        {location.children.map(l => <LocationCard key={l.path} location={l} />)}
+                        {location.children.map(l =>
+                            <LocationCard key={l.path} location={l} />)}
                     </Space>
                 </>}
 
@@ -40,9 +47,21 @@ export const LocationContent = ({ locations }: ILocationContentProps) => {
                         Tags
                     </LocationSubheader>
                     <Space wrap>
-                        {location.tags.map(t => <TagContainer key={t.id} title={t.name} />)}
+                        {location.tags.map(t =>
+                            <TagContainer key={t.id} title={t.name} />)}
+                        <NewCard onClick={() => setIsAddingTag(true)}/>
                     </Space>
                 </>}
+
+            <BindTagModal
+                isModalOpen={isAddingTag}
+                onAdd={(tags) => addTag({
+                    updateLocationCommandModel: {
+                        path: location.path,
+                        tags: tags.split(' ')
+                    }
+                })}
+                closeModal={() => setIsAddingTag(false)} />
         </>
     );
 };
