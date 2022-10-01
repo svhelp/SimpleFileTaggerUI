@@ -1,13 +1,17 @@
-import { Alert, Skeleton, Space } from "antd";
-import Search from "antd/lib/input/Search"
+import { AutoComplete, Input, Space } from "antd";
 import { TaggerDirectoryInfo, useSearchGetQuery } from "api/partial/search";
+import { useTagGetQuery } from "api/partial/tag";
 import { LocationCardContainer } from "components/Common/CardContainer";
+import { Tab } from "components/Common/Tab/Tab";
+import { TabHeaderContainer, TabContentContainer } from "components/Common/Tab/Tab.styles";
 import { useCallback, useState } from "react";
-import styled from "styled-components"
 
 export const SearchPage = () => {
 
+    const [ searchQuery, setSearchQuery ] = useState("");
     const [ searchValue, setSearchValue ] = useState([] as string[]);
+
+    const { data: tags, isFetching: isTagsFetching, isError: isTagsError, error: tagsError } = useTagGetQuery();
     const { data, isFetching, isError, error } = useSearchGetQuery({tags: searchValue});
 
     const parseSearchValues = useCallback((value: string) => {
@@ -18,48 +22,55 @@ export const SearchPage = () => {
     const openDirectory = useCallback((path: string) => window.electron.shell.openLocation(path), []);
 
     return (
-        <SearchPageContainer>
-            <SearchContainer>
-                <Search 
-                    onSearch={parseSearchValues}
-                    placeholder="Input tags" 
-                    enterButton="Search"
-                    size="large"
-                    disabled={isFetching}
-                    loading={isFetching} />
-            </SearchContainer>
-            <ContentContainer>      
-                {isFetching && <Skeleton.Image active />}
+        <Tab isError={isError} isFetching={isFetching} error={error}>
+            <TabHeaderContainer>
+                <AutoComplete
+                    value={searchQuery}
+                    onChange={(query, selectedTag) => {
+                        if (!Array.isArray(selectedTag) && !!selectedTag.value && !searchQuery.endsWith(query + ' ')) {
+                            const previousValue = searchQuery.split(' ');
+    
+                            previousValue.pop();
+                            previousValue.push(query);
+    
+                            const newValue = `${previousValue.join(' ')} `;
+                            setSearchQuery(newValue);
+    
+                            return;
+                        }
 
-                {isError && <Alert
-                    message="Error"
-                    description={error.toString()}
-                    type="error"
-                    showIcon />}
+                        setSearchQuery(query)
+                    }}
+                    options={tags?.map(t => ({value: t.name})) ?? []}
+                    filterOption={(query, option) => {
+                        const queryTags = query.split(' ');
 
-                {data &&
-                    <Space wrap>
-                        {data.map(loc =>
-                            <LocationCard key={loc.id} location={loc} openDirectory={openDirectory} />)}
-                    </Space>}
-            </ContentContainer>
-        </SearchPageContainer>
+                        if (!queryTags.length){
+                            return true;
+                        }
+
+                        return option?.value.startsWith(queryTags[queryTags.length-1]) ?? false
+                    }}
+                    style={{ width: "100%" }}
+                >
+                    <Input.Search 
+                        onSearch={parseSearchValues}
+                        placeholder="Input tags" 
+                        enterButton="Search"
+                        size="large"
+                        disabled={isFetching}
+                        loading={isFetching} />
+                </AutoComplete>
+            </TabHeaderContainer>
+            <TabContentContainer>
+                <Space wrap>
+                    {(data ?? []).map(loc =>
+                        <LocationCard key={loc.id} location={loc} openDirectory={openDirectory} />)}
+                </Space>
+            </TabContentContainer>
+        </Tab>
     )
 }
-
-const SearchPageContainer = styled.div`
-    height: 100%;
-`
-
-const SearchContainer = styled.div`
-    position: sticky;
-    top: 0;
-`
-
-const ContentContainer = styled.div`
-    overflow: auto;
-    height: 100%;
-`
 
 interface ILocationCardProps {
     openDirectory: (path: string) => void;
