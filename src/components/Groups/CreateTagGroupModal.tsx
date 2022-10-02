@@ -12,7 +12,7 @@ export const CreateTagGroupModal = (props: ICreateTagGroupModalProps) => {
 
     return (
         <Modal
-            title="New Tag"
+            title="New group"
             visible={props.isModalOpen}
             onOk={() => props.onCreate(gropName)}
             onCancel={props.closeModal}>

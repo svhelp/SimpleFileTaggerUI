@@ -7,6 +7,8 @@ import { TagCardContainer, TagNameContainer, TagToolbar } from "./TagContainer.s
 
 interface ITagContainerProps {
     title: string;
+    isSelected?: boolean;
+    onClick?: () => void;
     onEdit?: () => void;
     onRemove?: () => void;
 }
@@ -27,7 +29,7 @@ export const TagContainer = (props: ITagContainerProps) => {
                     </Button>}
                 
             </TagToolbar>
-            <TagNameContainer>
+            <TagNameContainer onClick={props.onClick}>
                 <p>
                     {props.title}
                 </p>

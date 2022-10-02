@@ -23,7 +23,7 @@ export const TagsPage = () => {
             <TabContentContainer>
                 <Space wrap>
                     {data?.map(tag =>
-                        <TagContainer title={tag.name} onRemove={() => removeTag({id: tag.id})} />)}
+                        <TagContainer key={tag.id} title={tag.name} onRemove={() => removeTag({id: tag.id})} />)}
                     <NewCard onClick={() => setIsCreatingTag(true)}/>
                 </Space>
             </TabContentContainer>
