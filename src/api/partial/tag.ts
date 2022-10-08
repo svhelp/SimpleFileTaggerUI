@@ -1,4 +1,6 @@
+import { CommandResultWithOfUpdateLocationCommandResultModel, UpdateLocationCommandModel, CommandResult, TagPlainModel, CommandResultWithOfGuid, SimpleNamedModel, MergeTagsCommandModel } from 'domain/models';
 import { emptySplitApi as api } from '../emptyApi';
+
 const injectedRtkApi = api.injectEndpoints({
   endpoints: (build) => ({
     locationAddTags: build.mutation<
@@ -41,6 +43,13 @@ const injectedRtkApi = api.injectEndpoints({
         body: queryArg.simpleNamedModel,
       }),
     }),
+    tagUpdate: build.mutation<TagUpdateApiResponse, TagUpdateApiArg>({
+      query: (queryArg) => ({
+        url: `/api/Tag/Update`,
+        method: 'PUT',
+        params: { Name: queryArg.name, Id: queryArg.id },
+      }),
+    }),
     tagRemove: build.mutation<TagRemoveApiResponse, TagRemoveApiArg>({
       query: (queryArg) => ({
         url: `/api/Tag/Remove`,
@@ -55,40 +64,12 @@ const injectedRtkApi = api.injectEndpoints({
         body: queryArg.mergeTagsCommandModel,
       }),
     }),
-    tagGroupGet: build.query<TagGroupGetApiResponse, TagGroupGetApiArg>({
-      query: () => ({ url: `/api/TagGroup/Get` }),
-    }),
-    tagGroupAdd: build.mutation<TagGroupAddApiResponse, TagGroupAddApiArg>({
-      query: (queryArg) => ({
-        url: `/api/TagGroup/Add`,
-        method: 'PUT',
-        body: queryArg.updateGroupCommandModel,
-      }),
-    }),
-    tagGroupRemove: build.mutation<
-      TagGroupRemoveApiResponse,
-      TagGroupRemoveApiArg
-    >({
-      query: (queryArg) => ({
-        url: `/api/TagGroup/Remove`,
-        method: 'DELETE',
-        params: { id: queryArg.id },
-      }),
-    }),
-    tagGroupRemoveTag: build.mutation<
-      TagGroupRemoveTagApiResponse,
-      TagGroupRemoveTagApiArg
-    >({
-      query: (queryArg) => ({
-        url: `/api/TagGroup/RemoveTag`,
-        method: 'PUT',
-        body: queryArg.updateGroupCommandModel,
-      }),
-    }),
   }),
   overrideExisting: false,
 });
+
 export { injectedRtkApi as enhancedApi };
+
 export type LocationAddTagsApiResponse =
   /** status 200  */ CommandResultWithOfUpdateLocationCommandResultModel;
 export type LocationAddTagsApiArg = {
@@ -103,11 +84,16 @@ export type LocationRemoveTagsApiResponse = /** status 200  */ CommandResult;
 export type LocationRemoveTagsApiArg = {
   updateLocationCommandModel: UpdateLocationCommandModel;
 };
-export type TagGetApiResponse = /** status 200  */ TagModel[];
+export type TagGetApiResponse = /** status 200  */ TagPlainModel[];
 export type TagGetApiArg = void;
 export type TagCreateApiResponse = /** status 200  */ CommandResultWithOfGuid;
 export type TagCreateApiArg = {
   simpleNamedModel: SimpleNamedModel;
+};
+export type TagUpdateApiResponse = /** status 200  */ CommandResult;
+export type TagUpdateApiArg = {
+  name?: string;
+  id?: string;
 };
 export type TagRemoveApiResponse = /** status 200  */ CommandResult;
 export type TagRemoveApiArg = {
@@ -117,83 +103,14 @@ export type TagMergeApiResponse = /** status 200  */ CommandResult;
 export type TagMergeApiArg = {
   mergeTagsCommandModel: MergeTagsCommandModel;
 };
-export type TagGroupGetApiResponse = /** status 200  */ TagGroupModel[];
-export type TagGroupGetApiArg = void;
-export type TagGroupAddApiResponse =
-  /** status 200  */ CommandResultWithOfUpdateLocationCommandModel;
-export type TagGroupAddApiArg = {
-  updateGroupCommandModel: UpdateGroupCommandModel;
-};
-export type TagGroupRemoveApiResponse = /** status 200  */ CommandResult;
-export type TagGroupRemoveApiArg = {
-  id?: string;
-};
-export type TagGroupRemoveTagApiResponse = /** status 200  */ CommandResult;
-export type TagGroupRemoveTagApiArg = {
-  updateGroupCommandModel: UpdateGroupCommandModel;
-};
-export type CommandResult = {
-  isSuccessful: boolean;
-  message: string;
-};
-export type ModelBase = {
-  id: string;
-};
-export type SimpleModel = {
-  id: string;
-  name: string;
-};
-export type UpdateLocationCommandResultModel = ModelBase & {
-  path: string;
-  name: string;
-  tags: SimpleModel[];
-};
-export type CommandResultWithOfUpdateLocationCommandResultModel =
-  CommandResult & {
-    data?: UpdateLocationCommandResultModel;
-  };
-export type UpdateLocationCommandModel = {
-  path: string;
-  tags: string[];
-};
-export type TagGroupModel = ModelBase & {
-  name: string;
-  tags: TagModel[];
-};
-export type ThumbnailModel = ModelBase & {
-  image: string;
-};
-export type TagModel = ModelBase & {
-  name: string;
-  group: TagGroupModel;
-  thumbnail: ThumbnailModel;
-};
-export type CommandResultWithOfGuid = CommandResult & {
-  data: string;
-};
-export type SimpleNamedModel = {
-  name: string;
-};
-export type MergeTagsCommandModel = {
-  tagIds: string[];
-};
-export type CommandResultWithOfUpdateLocationCommandModel = CommandResult & {
-  data?: UpdateLocationCommandModel;
-};
-export type UpdateGroupCommandModel = {
-  groupName: string;
-  tagIds: string[];
-};
+
 export const {
   useLocationAddTagsMutation,
   useLocationSetTagsMutation,
   useLocationRemoveTagsMutation,
   useTagGetQuery,
   useTagCreateMutation,
+  useTagUpdateMutation,
   useTagRemoveMutation,
   useTagMergeMutation,
-  useTagGroupGetQuery,
-  useTagGroupAddMutation,
-  useTagGroupRemoveMutation,
-  useTagGroupRemoveTagMutation,
 } = injectedRtkApi;

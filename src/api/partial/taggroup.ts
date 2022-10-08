@@ -1,12 +1,17 @@
+import { TagGroupPlainModel, CommandResultWithOfUpdateGroupTagsCommandResultModel, UpdateGroupCommandModel, CommandResult, UpdateTagGroupRelationCommandModel } from 'domain/models';
 import { emptySplitApi as api } from '../emptyApi';
+
 const injectedRtkApi = api.injectEndpoints({
   endpoints: (build) => ({
     tagGroupGet: build.query<TagGroupGetApiResponse, TagGroupGetApiArg>({
       query: () => ({ url: `/api/TagGroup/Get` }),
     }),
-    tagGroupAdd: build.mutation<TagGroupAddApiResponse, TagGroupAddApiArg>({
+    tagGroupUpdate: build.mutation<
+      TagGroupUpdateApiResponse,
+      TagGroupUpdateApiArg
+    >({
       query: (queryArg) => ({
-        url: `/api/TagGroup/Add`,
+        url: `/api/TagGroup/Update`,
         method: 'PUT',
         body: queryArg.updateGroupCommandModel,
       }),
@@ -21,6 +26,16 @@ const injectedRtkApi = api.injectEndpoints({
         params: { id: queryArg.id },
       }),
     }),
+    tagGroupAddTag: build.mutation<
+      TagGroupAddTagApiResponse,
+      TagGroupAddTagApiArg
+    >({
+      query: (queryArg) => ({
+        url: `/api/TagGroup/AddTag`,
+        method: 'PUT',
+        body: queryArg.updateTagGroupRelationCommandModel,
+      }),
+    }),
     tagGroupRemoveTag: build.mutation<
       TagGroupRemoveTagApiResponse,
       TagGroupRemoveTagApiArg
@@ -28,61 +43,39 @@ const injectedRtkApi = api.injectEndpoints({
       query: (queryArg) => ({
         url: `/api/TagGroup/RemoveTag`,
         method: 'PUT',
-        body: queryArg.updateGroupCommandModel,
+        body: queryArg.updateTagGroupRelationCommandModel,
       }),
     }),
   }),
   overrideExisting: false,
 });
+
 export { injectedRtkApi as enhancedApi };
-export type TagGroupGetApiResponse = /** status 200  */ TagGroupModel[];
+
+export type TagGroupGetApiResponse = /** status 200  */ TagGroupPlainModel[];
 export type TagGroupGetApiArg = void;
-export type TagGroupAddApiResponse =
-  /** status 200  */ CommandResultWithOfUpdateLocationCommandModel;
-export type TagGroupAddApiArg = {
+export type TagGroupUpdateApiResponse =
+  /** status 200  */ CommandResultWithOfUpdateGroupTagsCommandResultModel;
+export type TagGroupUpdateApiArg = {
   updateGroupCommandModel: UpdateGroupCommandModel;
 };
 export type TagGroupRemoveApiResponse = /** status 200  */ CommandResult;
 export type TagGroupRemoveApiArg = {
   id?: string;
 };
+export type TagGroupAddTagApiResponse = /** status 200  */ CommandResult;
+export type TagGroupAddTagApiArg = {
+  updateTagGroupRelationCommandModel: UpdateTagGroupRelationCommandModel;
+};
 export type TagGroupRemoveTagApiResponse = /** status 200  */ CommandResult;
 export type TagGroupRemoveTagApiArg = {
-  updateGroupCommandModel: UpdateGroupCommandModel;
+  updateTagGroupRelationCommandModel: UpdateTagGroupRelationCommandModel;
 };
-export type ModelBase = {
-  id: string;
-};
-export type ThumbnailModel = ModelBase & {
-  image: string;
-};
-export type TagModel = ModelBase & {
-  name: string;
-  group: TagGroupModel;
-  thumbnail: ThumbnailModel;
-};
-export type TagGroupModel = ModelBase & {
-  name: string;
-  tags: TagModel[];
-};
-export type CommandResult = {
-  isSuccessful: boolean;
-  message: string;
-};
-export type UpdateLocationCommandModel = {
-  path: string;
-  tags: string[];
-};
-export type CommandResultWithOfUpdateLocationCommandModel = CommandResult & {
-  data?: UpdateLocationCommandModel;
-};
-export type UpdateGroupCommandModel = {
-  groupName: string;
-  tagIds: string[];
-};
+
 export const {
   useTagGroupGetQuery,
-  useTagGroupAddMutation,
+  useTagGroupUpdateMutation,
   useTagGroupRemoveMutation,
+  useTagGroupAddTagMutation,
   useTagGroupRemoveTagMutation,
 } = injectedRtkApi;

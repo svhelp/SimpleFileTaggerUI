@@ -1,4 +1,6 @@
+import { CommandResult, CommandResultWithOfUpdateLocationCommandResultModel, LocationModel, SimpleNamedModel, UpdateLocationCommandModel } from 'domain/models';
 import { emptySplitApi as api } from '../emptyApi';
+
 const injectedRtkApi = api.injectEndpoints({
   endpoints: (build) => ({
     locationGet: build.query<LocationGetApiResponse, LocationGetApiArg>({
@@ -9,6 +11,16 @@ const injectedRtkApi = api.injectEndpoints({
     }),
     locationAll: build.query<LocationAllApiResponse, LocationAllApiArg>({
       query: () => ({ url: `/api/Location/All` }),
+    }),
+    locationCreate: build.mutation<
+      LocationCreateApiResponse,
+      LocationCreateApiArg
+    >({
+      query: (queryArg) => ({
+        url: `/api/Location/Create`,
+        method: 'POST',
+        body: queryArg.simpleNamedModel,
+      }),
     }),
     locationAddTags: build.mutation<
       LocationAddTagsApiResponse,
@@ -53,13 +65,19 @@ const injectedRtkApi = api.injectEndpoints({
   }),
   overrideExisting: false,
 });
+
 export { injectedRtkApi as enhancedApi };
-export type LocationGetApiResponse = /** status 200  */ TaggerDirectoryInfo;
+
+export type LocationGetApiResponse = /** status 200  */ LocationModel;
 export type LocationGetApiArg = {
   path?: string;
 };
-export type LocationAllApiResponse = /** status 200  */ TaggerDirectoryInfo[];
+export type LocationAllApiResponse = /** status 200  */ LocationModel[];
 export type LocationAllApiArg = void;
+export type LocationCreateApiResponse = /** status 200  */ CommandResult;
+export type LocationCreateApiArg = {
+  simpleNamedModel: SimpleNamedModel;
+};
 export type LocationAddTagsApiResponse =
   /** status 200  */ CommandResultWithOfUpdateLocationCommandResultModel;
 export type LocationAddTagsApiArg = {
@@ -78,51 +96,11 @@ export type LocationRemoveApiResponse = /** status 200  */ CommandResult;
 export type LocationRemoveApiArg = {
   id?: string;
 };
-export type ModelBase = {
-  id: string;
-};
-export type TagGroupModel = ModelBase & {
-  name: string;
-  tags: TagModel[];
-};
-export type ThumbnailModel = ModelBase & {
-  image: string;
-};
-export type TagModel = ModelBase & {
-  name: string;
-  group: TagGroupModel;
-  thumbnail: ThumbnailModel;
-};
-export type TaggerDirectoryInfo = ModelBase & {
-  path: string;
-  name: string;
-  children: TaggerDirectoryInfo[];
-  tags: TagModel[];
-};
-export type CommandResult = {
-  isSuccessful: boolean;
-  message: string;
-};
-export type SimpleModel = {
-  id: string;
-  name: string;
-};
-export type UpdateLocationCommandResultModel = ModelBase & {
-  path: string;
-  name: string;
-  tags: SimpleModel[];
-};
-export type CommandResultWithOfUpdateLocationCommandResultModel =
-  CommandResult & {
-    data?: UpdateLocationCommandResultModel;
-  };
-export type UpdateLocationCommandModel = {
-  path: string;
-  tags: string[];
-};
+
 export const {
   useLocationGetQuery,
   useLocationAllQuery,
+  useLocationCreateMutation,
   useLocationAddTagsMutation,
   useLocationSetTagsMutation,
   useLocationRemoveTagsMutation,
