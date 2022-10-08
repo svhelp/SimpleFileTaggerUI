@@ -39,7 +39,7 @@ export type ThumbnailPlainModel = ModelBase & {
     };
 
   export type UpdateGroupCommandModel = {
-    id: string;
+    id?: string;
     name: string;
     tagIds: string[];
   };

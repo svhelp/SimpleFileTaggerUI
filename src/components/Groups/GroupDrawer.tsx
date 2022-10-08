@@ -1,12 +1,12 @@
 import { Drawer, Space, Button } from "antd";
-import { TagGroupModel, TagModel } from "api/partial/location";
 import { TagsListContent } from "components/Common/Tag/TagsListContent";
+import { TagGroupPlainModel, TagPlainModel } from "domain/models";
 import { useState, useEffect } from "react";
 import styled from "styled-components";
 
 interface IGroupDrawerProps {
-    group?: TagGroupModel;
-    availableTags: TagModel[];
+    group?: TagGroupPlainModel;
+    availableTags: TagPlainModel[];
     updateTags: (ids: string[]) => void;
     closeDrawer: () => void;
 }
@@ -14,7 +14,7 @@ interface IGroupDrawerProps {
 export const GroupDrawer = (props: IGroupDrawerProps) => {
     const { group, availableTags, updateTags, closeDrawer } = props;
 
-    const [ tags, setTags ] = useState<TagModel[]>([]);
+    const [ tags, setTags ] = useState<TagPlainModel[]>([]);
 
     useEffect(() => {
         if (!props.group){
@@ -22,7 +22,7 @@ export const GroupDrawer = (props: IGroupDrawerProps) => {
             return;
         }
 
-        setTags(props.group.tags);
+        setTags(availableTags.filter(t => props.group?.tagIds.includes(t.id)));
     }, [ props.group ]);
     
 

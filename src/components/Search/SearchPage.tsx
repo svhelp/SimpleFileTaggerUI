@@ -1,9 +1,10 @@
 import { AutoComplete, Input, Space } from "antd";
-import { TaggerDirectoryInfo, useSearchGetQuery } from "api/partial/search";
+import { useSearchGetQuery } from "api/partial/search";
 import { useTagGetQuery } from "api/partial/tag";
 import { LocationCardContainer } from "components/Common/CardContainer";
 import { Tab } from "components/Common/Tab/Tab";
 import { TabHeaderContainer, TabContentContainer } from "components/Common/Tab/Tab.styles";
+import { LocationPlainModel } from "domain/models";
 import { useCallback, useState } from "react";
 
 export const SearchPage = () => {
@@ -74,7 +75,7 @@ export const SearchPage = () => {
 
 interface ILocationCardProps {
     openDirectory: (path: string) => void;
-    location: TaggerDirectoryInfo;
+    location: LocationPlainModel;
 }
 
 export const LocationCard = ({ location, openDirectory }: ILocationCardProps) => {

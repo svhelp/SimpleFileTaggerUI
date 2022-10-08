@@ -1,5 +1,5 @@
 import { Space } from "antd";
-import { useTagGetQuery, useTagCreateMutation, useTagRemoveMutation } from "api/partial/tag";
+import { useTagCreateMutation, useTagGetQuery, useTagRemoveMutation } from "api/partial/tag";
 import { NewCard } from "components/Common/NewCard/NewCard";
 import { Tab } from "components/Common/Tab/Tab";
 import { TabHeaderContainer, TabContentContainer } from "components/Common/Tab/Tab.styles";
@@ -8,9 +8,10 @@ import { useState } from "react";
 import { AddTagModal } from "./AddTagModal";
 
 export const TagsPage = () => {
+    const { data: availableTags, isFetching, isError, error } = useTagGetQuery();
+
     const [ isCreatingTag, setIsCreatingTag ] = useState(false);
-    const { data, isFetching, isError, error } = useTagGetQuery();
-    const [ crateTag, {} ] = useTagCreateMutation();
+    const [ createTag, {} ] = useTagCreateMutation();
     const [ removeTag, {} ] = useTagRemoveMutation();
 
     return (
@@ -22,7 +23,7 @@ export const TagsPage = () => {
             </TabHeaderContainer>
             <TabContentContainer>
                 <Space wrap>
-                    {data?.map(tag =>
+                    {availableTags?.map(tag =>
                         <TagContainer key={tag.id} title={tag.name} onRemove={() => removeTag({id: tag.id})} />)}
                     <NewCard onClick={() => setIsCreatingTag(true)}/>
                 </Space>
@@ -30,7 +31,7 @@ export const TagsPage = () => {
 
             <AddTagModal
                 isModalOpen={isCreatingTag}
-                onCreate={(tag) => crateTag({simpleNamedModel: {name: tag}})}
+                onCreate={(tagName) => createTag({simpleNamedModel: {name: tagName}})}
                 closeModal={() => setIsCreatingTag(false)} />
         </Tab>
     )

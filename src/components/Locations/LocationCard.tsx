@@ -1,10 +1,10 @@
-import { TaggerDirectoryInfo } from "api/partial/location";
 import { LocationCardContainer } from "components/Common/CardContainer";
+import { LocationModel } from "domain/models";
 import { useCallback } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
 interface ILocationCardProps {
-    location: TaggerDirectoryInfo;
+    location: LocationModel;
 }
 
 export const LocationCard = ({ location }: ILocationCardProps) => {

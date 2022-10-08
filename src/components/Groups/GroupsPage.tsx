@@ -1,6 +1,6 @@
 import { notification, Space } from "antd";
 
-import { TagGroupModel, useTagGroupAddMutation, useTagGroupGetQuery, useTagGroupRemoveMutation } from "api/partial/taggroup";
+import { useTagGroupGetQuery, useTagGroupRemoveMutation, useTagGroupUpdateMutation } from "api/partial/taggroup";
 import { NewCard } from "components/Common/NewCard/NewCard";
 import { Tab } from "components/Common/Tab/Tab";
 import { TabHeaderContainer, TabContentContainer } from "components/Common/Tab/Tab.styles";
@@ -9,15 +9,16 @@ import { useEffect, useState } from "react";
 import { CreateTagGroupModal } from "./CreateTagGroupModal";
 import { useTagGetQuery } from "api/partial/tag";
 import { GroupDrawer } from "./GroupDrawer";
+import { TagGroupPlainModel } from "domain/models";
 
 export const GroupsPage = () => {
     const [ isCreatingGroup, setIsCreatingGroup ] = useState(false);
-    const [ selectedGroup, setSelectedGroup ] = useState<TagGroupModel | undefined>(undefined);
+    const [ selectedGroup, setSelectedGroup ] = useState<TagGroupPlainModel | undefined>(undefined);
 
     const { data, isFetching, isError, error } = useTagGroupGetQuery();
     const { data: tags, isFetching: isTagsFetching, isError: isTagsError, error: tagsError } = useTagGetQuery();
 
-    const [ updateTagGroupQuery, updateTagGroupQueryResult ] = useTagGroupAddMutation();
+    const [ updateTagGroupQuery, updateTagGroupQueryResult ] = useTagGroupUpdateMutation();
     const [ removeTagGroup, {} ] = useTagGroupRemoveMutation();
 
     useEffect(() => {
@@ -54,7 +55,7 @@ export const GroupsPage = () => {
     const doUpdateTagGroup = (groupName: string, tagIds: string[]) => {
         const model = {
             updateGroupCommandModel: {
-                groupName: groupName,
+                name: groupName,
                 tagIds: tagIds
             }
         }

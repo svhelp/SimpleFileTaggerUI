@@ -2,13 +2,13 @@ import { InputRef, Tag, Tooltip, AutoComplete, Input } from "antd";
 import {
     PlusOutlined,
   } from '@ant-design/icons';
-import { TagModel } from "api/partial/tag";
 import { useRef, useState, useEffect } from "react";
+import { TagPlainModel } from "domain/models";
 
 interface ITagsListContentProps {
-    tags: TagModel[];
-    availableTags: TagModel[];
-    updateTags: (tags: TagModel[]) => void;
+    tags: TagPlainModel[];
+    availableTags: TagPlainModel[];
+    updateTags: (tags: TagPlainModel[]) => void;
 }
 
 export const TagsListContent = (props: ITagsListContentProps) => {

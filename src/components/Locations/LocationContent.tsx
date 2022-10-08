@@ -2,17 +2,21 @@ import { useLocation } from "react-router-dom";
 import { LocationCard } from "./LocationCard";
 import styled from "styled-components";
 import { Space } from "antd";
-import { TaggerDirectoryInfo, useLocationAddTagsMutation } from "api/partial/location";
+import { useLocationAddTagsMutation } from "api/partial/location";
 import { TagContainer } from "components/Common/Tag/TagContainer";
 import { NewCard } from "components/Common/NewCard/NewCard";
 import { useState } from "react";
 import { BindTagModal } from "./BindTagModal";
+import { useTagGetQuery } from "api/partial/tag";
+import { LocationModel } from "domain/models";
 
 interface ILocationContentProps {
-    locations: TaggerDirectoryInfo[];
+    locations: LocationModel[];
 }
 
 export const LocationContent = ({ locations }: ILocationContentProps) => {
+    const { data, isFetching, isError, error } = useTagGetQuery();
+
     const path = useLocation();
     const [ isAddingTag, setIsAddingTag ] = useState(false);
 
@@ -23,7 +27,7 @@ export const LocationContent = ({ locations }: ILocationContentProps) => {
         path: '',
         name: '',
         children: locations || [],
-        tags: [],
+        tagIds: [],
     });
 
     const [ addTag, {} ] = useLocationAddTagsMutation();
@@ -41,13 +45,13 @@ export const LocationContent = ({ locations }: ILocationContentProps) => {
                     </Space>
                 </>}
 
-            {location.tags.length > 0 &&
+            {location.tagIds.length > 0 &&
                 <>
                     <LocationSubheader>
                         Tags
                     </LocationSubheader>
                     <Space wrap>
-                        {location.tags.map(t =>
+                        {data?.filter(tag => location.tagIds.includes(tag.id)).map(t =>
                             <TagContainer key={t.id} title={t.name} />)}
                         <NewCard onClick={() => setIsAddingTag(true)}/>
                     </Space>
@@ -66,7 +70,7 @@ export const LocationContent = ({ locations }: ILocationContentProps) => {
     );
 };
 
-const getTargetLocation = (pathSnippets: string[], location?: TaggerDirectoryInfo): TaggerDirectoryInfo => {
+const getTargetLocation = (pathSnippets: string[], location?: LocationModel): LocationModel => {
     if (!location) {
         throw new Error("Location not found.");
     }
