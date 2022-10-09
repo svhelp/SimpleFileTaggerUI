@@ -1,4 +1,42 @@
+import { AnyAction, ThunkDispatch } from '@reduxjs/toolkit';
+import { CommandResultWithOfUpdateLocationCommandResultModel } from 'domain/models';
 import { enhancedApi as api } from '../partial/location';
+import { enhancedApi as tagsApi } from '../partial/tag';
+
+const updateLocationsCache = (
+    dispatch: ThunkDispatch<any, any, AnyAction>,
+    response: CommandResultWithOfUpdateLocationCommandResultModel) => {
+    dispatch(
+        api.util.updateQueryData('locationAll', undefined, (draft) => {
+            const updatedLocation = draft.find(l => l.id === response.data!.id);
+
+            if (!updatedLocation) {
+                return;
+            }
+
+            updatedLocation.tagIds = response.data!.tags.map(t => t.id);
+        })
+    );
+}
+
+const updateTagsCache = (
+    dispatch: ThunkDispatch<any, any, AnyAction>,
+    response: CommandResultWithOfUpdateLocationCommandResultModel) => {
+    dispatch(
+        tagsApi.util.updateQueryData('tagGet', undefined, (draft) => {
+            const tagsToAdd = response.data!.tags.filter(t => !draft.some(existingTag => existingTag.id === t.id));
+
+            for (const tag of tagsToAdd) {
+                draft.push({
+                    id: tag.id,
+                    name: tag.name,
+                    groupId: '',
+                    thumbnailId: ''
+                });
+            }
+        })
+    );
+}
 
 const enhancedApi = api.enhanceEndpoints({
   addTagTypes: ['Locations'],
@@ -44,17 +82,8 @@ const enhancedApi = api.enhanceEndpoints({
                 return;
               }
     
-              dispatch(
-                api.util.updateQueryData('locationAll', undefined, (draft) => {
-                  const updatedLocation = draft.find(l => l.id === response.data!.id);
-
-                  if (!updatedLocation){
-                    return;
-                  }
-
-                  updatedLocation.tagIds = response.data!.tags.map(t => t.id);
-                })
-              )
+              updateLocationsCache(dispatch, response);
+              updateTagsCache(dispatch, response);
             } catch {}
           }
     },
@@ -67,17 +96,8 @@ const enhancedApi = api.enhanceEndpoints({
                 return;
               }
     
-              dispatch(
-                api.util.updateQueryData('locationAll', undefined, (draft) => {
-                  const updatedLocation = draft.find(l => l.id === response.data!.id);
-
-                  if (!updatedLocation){
-                    return;
-                  }
-
-                  updatedLocation.tagIds = response.data!.tags.map(t => t.id);
-                })
-              )
+              updateLocationsCache(dispatch, response);
+              updateTagsCache(dispatch, response);
             } catch {}
           }
     },
@@ -116,3 +136,4 @@ export const {
     useLocationRemoveTagsMutation,
     useLocationRemoveMutation,
 } = enhancedApi;
+
