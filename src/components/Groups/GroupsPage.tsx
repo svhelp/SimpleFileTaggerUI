@@ -1,60 +1,44 @@
-import { notification, Space } from "antd";
+import { Space } from "antd";
 
-import { useTagGroupGetQuery, useTagGroupRemoveMutation, useTagGroupUpdateMutation } from "api/partial/taggroup";
 import { NewCard } from "components/Common/NewCard/NewCard";
 import { Tab } from "components/Common/Tab/Tab";
 import { TabHeaderContainer, TabContentContainer } from "components/Common/Tab/Tab.styles";
 import { TagContainer } from "components/Common/Tag/TagContainer";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { CreateTagGroupModal } from "./CreateTagGroupModal";
-import { useTagGetQuery } from "api/partial/tag";
 import { GroupDrawer } from "./GroupDrawer";
 import { TagGroupPlainModel } from "domain/models";
+import { useQueryResult } from "customHooks/useQueryResult";
+import { useTagGetQuery } from "api/enchanced/tag";
+import { useTagGroupGetQuery, useTagGroupUpdateMutation, useTagGroupRemoveMutation } from "api/enchanced/taggroup";
 
 export const GroupsPage = () => {
     const [ isCreatingGroup, setIsCreatingGroup ] = useState(false);
     const [ selectedGroup, setSelectedGroup ] = useState<TagGroupPlainModel | undefined>(undefined);
 
-    const { data, isFetching, isError, error } = useTagGroupGetQuery();
+    const { data: tagGroups, isFetching, isError, error } = useTagGroupGetQuery();
     const { data: tags, isFetching: isTagsFetching, isError: isTagsError, error: tagsError } = useTagGetQuery();
 
     const [ updateTagGroupQuery, updateTagGroupQueryResult ] = useTagGroupUpdateMutation();
-    const [ removeTagGroup, {} ] = useTagGroupRemoveMutation();
+    const [ removeTagGroup, removeTagGroupResult ] = useTagGroupRemoveMutation();
 
-    useEffect(() => {
-        if (!updateTagGroupQueryResult.data){
-            return;
-        }
-
-        if (updateTagGroupQueryResult.data.isSuccessful) {
-            notification.success({
-                message: `Update successful`,
-                placement: "bottomRight",
-            });
-        }
-
-        if (!updateTagGroupQueryResult.data.isSuccessful) {
-            notification.success({
-                message: `Update error`,
-                description: <span>{updateTagGroupQueryResult.data.message}</span>,
-                placement: "bottomRight",
-            });
-        }
-    }, [updateTagGroupQueryResult])
+    useQueryResult(updateTagGroupQueryResult);
+    useQueryResult(removeTagGroupResult);
 
     const createTagGroup = (groupName: string, tagIds: string[]) => {
-        doUpdateTagGroup(groupName, tagIds);
+        doUpdateTagGroup(undefined, groupName, tagIds);
         setIsCreatingGroup(false);
     }
 
-    const updateTagGroup = (groupName: string, tagIds: string[]) => {
-        doUpdateTagGroup(groupName, tagIds);
+    const updateTagGroup = (groupId: string | undefined, groupName: string, tagIds: string[]) => {
+        doUpdateTagGroup(groupId, groupName, tagIds);
         setSelectedGroup(undefined);
     }
 
-    const doUpdateTagGroup = (groupName: string, tagIds: string[]) => {
+    const doUpdateTagGroup = (groupId: string | undefined, groupName: string, tagIds: string[]) => {
         const model = {
             updateGroupCommandModel: {
+                id: groupId,
                 name: groupName,
                 tagIds: tagIds
             }
@@ -73,7 +57,7 @@ export const GroupsPage = () => {
             </TabHeaderContainer>
             <TabContentContainer>
                 <Space wrap>
-                    {data?.map(tagGroup =>
+                    {tagGroups?.map(tagGroup =>
                         <TagContainer
                             key={tagGroup.id}
                             title={tagGroup.name}
@@ -88,7 +72,7 @@ export const GroupsPage = () => {
             <GroupDrawer
                 group={selectedGroup}
                 availableTags={tags ?? []}
-                updateTags={ids => updateTagGroup(selectedGroup?.name ?? "", ids)}
+                updateTags={ids => updateTagGroup(selectedGroup?.id, selectedGroup?.name ?? "", ids)}
                 closeDrawer={() => setSelectedGroup(undefined)}
             />
 
@@ -99,3 +83,4 @@ export const GroupsPage = () => {
         </Tab>
     )
 }
+

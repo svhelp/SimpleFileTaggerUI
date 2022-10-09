@@ -17,7 +17,7 @@ const enhancedApi = api.enhanceEndpoints({
     
               dispatch(
                 api.util.updateQueryData('tagGroupGet', undefined, (draft) => {
-                  const updatedTag = draft.find(t => t.id === updateGroupCommandModel.id);
+                  const updatedTag = draft.find(t => t.id === response.data!.id);
 
                   if (!updatedTag){
                     draft.push({

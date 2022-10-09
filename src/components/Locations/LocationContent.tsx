@@ -2,13 +2,13 @@ import { useLocation } from "react-router-dom";
 import { LocationCard } from "./LocationCard";
 import styled from "styled-components";
 import { Space } from "antd";
-import { useLocationAddTagsMutation } from "api/partial/location";
 import { TagContainer } from "components/Common/Tag/TagContainer";
 import { NewCard } from "components/Common/NewCard/NewCard";
 import { useState } from "react";
 import { BindTagModal } from "./BindTagModal";
-import { useTagGetQuery } from "api/partial/tag";
 import { LocationModel } from "domain/models";
+import { useTagGetQuery } from "api/enchanced/tag";
+import { useLocationAddTagsMutation } from "api/enchanced/location";
 
 interface ILocationContentProps {
     locations: LocationModel[];

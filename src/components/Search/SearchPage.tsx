@@ -1,6 +1,6 @@
 import { AutoComplete, Input, Space } from "antd";
+import { useTagGetQuery } from "api/enchanced/tag";
 import { useSearchGetQuery } from "api/partial/search";
-import { useTagGetQuery } from "api/partial/tag";
 import { LocationCardContainer } from "components/Common/CardContainer";
 import { Tab } from "components/Common/Tab/Tab";
 import { TabHeaderContainer, TabContentContainer } from "components/Common/Tab/Tab.styles";

@@ -1,18 +1,22 @@
-import { Space } from "antd";
-import { useTagCreateMutation, useTagGetQuery, useTagRemoveMutation } from "api/partial/tag";
+import {  Space } from "antd";
 import { NewCard } from "components/Common/NewCard/NewCard";
 import { Tab } from "components/Common/Tab/Tab";
 import { TabHeaderContainer, TabContentContainer } from "components/Common/Tab/Tab.styles";
 import { TagContainer } from 'components/Common/Tag/TagContainer';
 import { useState } from "react";
 import { AddTagModal } from "./AddTagModal";
+import { useQueryResult } from 'customHooks/useQueryResult'
+import { useTagCreateMutation, useTagGetQuery, useTagRemoveMutation } from "api/enchanced/tag";
 
 export const TagsPage = () => {
     const { data: availableTags, isFetching, isError, error } = useTagGetQuery();
 
     const [ isCreatingTag, setIsCreatingTag ] = useState(false);
-    const [ createTag, {} ] = useTagCreateMutation();
-    const [ removeTag, {} ] = useTagRemoveMutation();
+    const [ createTag, createTagResult ] = useTagCreateMutation();
+    const [ removeTag, removeTagResult ] = useTagRemoveMutation();
+
+    useQueryResult(createTagResult);
+    useQueryResult(removeTagResult);
 
     return (
         <Tab isError={isError} isFetching={isFetching} error={error}>
