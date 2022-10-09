@@ -1,29 +1,51 @@
+import { SerializedError } from "@reduxjs/toolkit";
+import { FetchBaseQueryError, QueryStatus } from "@reduxjs/toolkit/dist/query";
 import { notification } from "antd";
+import { ErrorNotification } from "components/Common/ErrorNotification.styles";
 import { CommandResult } from "domain/models"
 import { useEffect } from "react"
+import { getErrorMessage } from "utils/getErrorMessage";
 
 interface IQueryResult {
-    data?: CommandResult
+    data?: CommandResult;
+    status: QueryStatus;
+    error?: FetchBaseQueryError | SerializedError
 }
 
 export const useQueryResult = (queryResult: IQueryResult) => {
     useEffect(() => {
-        if (!queryResult.data){
+        if (!queryResult){
+            return;
+        }
+
+        if (queryResult.status === QueryStatus.rejected) {
+            notification.error({
+                message: `Error`,
+                description: <ErrorNotification>{getErrorMessage(queryResult.error)}</ErrorNotification>,
+                placement: "bottomRight",
+                duration: 0,
+            });
+
+            return;
+        }
+        
+        if (queryResult.status !== QueryStatus.fulfilled || !queryResult.data){
             return;
         }
 
         if (queryResult.data.isSuccessful) {
             notification.success({
-                message: `Update successful`,
+                message: `Success`,
                 placement: "bottomRight",
             });
         }
 
         if (!queryResult.data.isSuccessful) {
-            notification.success({
-                message: `Update error`,
-                description: <span>{queryResult.data.message}</span>,
+            notification.error({
+                message: `Error`,
+                description: <ErrorNotification>{queryResult.data.message}</ErrorNotification>,
                 placement: "bottomRight",
+                duration: 0,
             });
         }
     }, [ queryResult ]);

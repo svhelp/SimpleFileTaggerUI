@@ -1,4 +1,4 @@
-import { Button } from "antd"
+import { Button, Popconfirm } from "antd"
 import {
     EditOutlined,
     DeleteOutlined,
@@ -17,16 +17,23 @@ export const TagContainer = (props: ITagContainerProps) => {
     return (
         <TagCardContainer hoverable>
             <TagToolbar>
-
                 {props.onEdit &&
                     <Button type="text" onClick={props.onEdit}>
                         <EditOutlined />
                     </Button>}
                 
                 {props.onRemove &&
-                    <Button type="text" onClick={props.onRemove}>
-                        <DeleteOutlined />
-                    </Button>}
+                    <Popconfirm
+                        title="Are you sure?"
+                        onConfirm={props.onRemove}
+                        okText="Yes"
+                        cancelText="No"
+                    >
+                        <Button type="text">
+                            <DeleteOutlined />
+                        </Button>
+                    </Popconfirm>
+                }
                 
             </TagToolbar>
             <TagNameContainer onClick={props.onClick}>

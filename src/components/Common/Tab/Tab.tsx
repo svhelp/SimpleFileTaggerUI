@@ -2,6 +2,7 @@ import { SerializedError } from "@reduxjs/toolkit";
 import { FetchBaseQueryError } from "@reduxjs/toolkit/dist/query";
 import { Alert, Skeleton } from "antd";
 import React, { FC } from "react";
+import { getErrorMessage } from "utils/getErrorMessage";
 import { TabContainer } from "./Tab.styles";
 
 interface ITabProps {
@@ -27,20 +28,4 @@ export const Tab: FC<ITabProps> = (props) => {
             {!props.isFetching && !props.isError && props.children}
         </TabContainer>
     )
-}
-
-const getErrorMessage = (error: FetchBaseQueryError | SerializedError | undefined) => {
-    if (!error){
-        return '';
-    }
-
-    if ((error as FetchBaseQueryError).data !== undefined){
-        return (error as FetchBaseQueryError).data as string;
-    }
-
-    if ((error as SerializedError).message !== undefined){
-        return (error as SerializedError).message;
-    }
-
-    return '';
 }

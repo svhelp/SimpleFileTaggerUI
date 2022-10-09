@@ -21,7 +21,7 @@ export const GroupsPage = () => {
 
     const [ updateTagGroupQuery, updateTagGroupQueryResult ] = useTagGroupUpdateMutation();
     const [ removeTagGroup, removeTagGroupResult ] = useTagGroupRemoveMutation();
-
+    
     useQueryResult(updateTagGroupQueryResult);
     useQueryResult(removeTagGroupResult);
 
@@ -49,7 +49,6 @@ export const GroupsPage = () => {
     
     return (
         <Tab isError={isError} isFetching={isFetching} error={error}>
-            {/* {contextHolder} */}
             <TabHeaderContainer>
                 <h1>
                     Groups

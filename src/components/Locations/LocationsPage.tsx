@@ -6,7 +6,6 @@ import { useLocationAllQuery } from "api/enchanced/location";
 
 export const LocationsPage = () => {
     const { data, isFetching, isError, error } = useLocationAllQuery();
-    //const { data, isFetching, isError, error } = useGetLocationTagsQuery(locationPath);
 
     return (
         <Tab isError={isError} isFetching={isFetching} error={error}>
