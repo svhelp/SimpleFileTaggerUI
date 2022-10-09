@@ -74,7 +74,8 @@ export type LocationGetApiArg = {
 };
 export type LocationAllApiResponse = /** status 200  */ LocationModel[];
 export type LocationAllApiArg = void;
-export type LocationCreateApiResponse = /** status 200  */ CommandResult;
+export type LocationCreateApiResponse =
+  /** status 200  */ CommandResultWithOfUpdateLocationCommandResultModel;
 export type LocationCreateApiArg = {
   simpleNamedModel: SimpleNamedModel;
 };
@@ -96,13 +97,3 @@ export type LocationRemoveApiResponse = /** status 200  */ CommandResult;
 export type LocationRemoveApiArg = {
   id?: string;
 };
-
-export const {
-  useLocationGetQuery,
-  useLocationAllQuery,
-  useLocationCreateMutation,
-  useLocationAddTagsMutation,
-  useLocationSetTagsMutation,
-  useLocationRemoveTagsMutation,
-  useLocationRemoveMutation,
-} = injectedRtkApi;

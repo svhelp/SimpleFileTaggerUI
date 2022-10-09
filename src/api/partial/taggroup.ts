@@ -71,11 +71,3 @@ export type TagGroupRemoveTagApiResponse = /** status 200  */ CommandResult;
 export type TagGroupRemoveTagApiArg = {
   updateTagGroupRelationCommandModel: UpdateTagGroupRelationCommandModel;
 };
-
-export const {
-  useTagGroupGetQuery,
-  useTagGroupUpdateMutation,
-  useTagGroupRemoveMutation,
-  useTagGroupAddTagMutation,
-  useTagGroupRemoveTagMutation,
-} = injectedRtkApi;

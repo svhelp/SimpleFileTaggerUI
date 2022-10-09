@@ -1,4 +1,4 @@
-import { CommandResultWithOfUpdateLocationCommandResultModel, UpdateLocationCommandModel, CommandResult, TagPlainModel, CommandResultWithOfGuid, SimpleNamedModel, MergeTagsCommandModel } from 'domain/models';
+import { CommandResult, TagPlainModel, CommandResultWithOfGuid, SimpleNamedModel, MergeTagsCommandModel } from 'domain/models';
 import { emptySplitApi as api } from '../emptyApi';
 
 const injectedRtkApi = api.injectEndpoints({
@@ -59,14 +59,3 @@ export type TagMergeApiResponse = /** status 200  */ CommandResult;
 export type TagMergeApiArg = {
   mergeTagsCommandModel: MergeTagsCommandModel;
 };
-
-export const {
-  useLocationAddTagsMutation,
-  useLocationSetTagsMutation,
-  useLocationRemoveTagsMutation,
-  useTagGetQuery,
-  useTagCreateMutation,
-  useTagUpdateMutation,
-  useTagRemoveMutation,
-  useTagMergeMutation,
-} = injectedRtkApi;

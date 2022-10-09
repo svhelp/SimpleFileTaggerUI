@@ -45,9 +45,3 @@ export type ThumbnailRemoveApiResponse = /** status 200  */ CommandResult;
 export type ThumbnailRemoveApiArg = {
   id?: string;
 };
-
-export const {
-  useThumbnailGetQuery,
-  useThumbnailAddMutation,
-  useThumbnailRemoveMutation,
-} = injectedRtkApi;
