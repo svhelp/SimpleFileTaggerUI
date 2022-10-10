@@ -26,7 +26,6 @@ export const LocationContent = ({ locations }: ILocationContentProps) => {
     const [ updateLocation, updateLocationResult ] = useLocationSetTagsMutation();
     const [ removeLocation, removeLocationResult ] = useLocationRemoveMutation();
     
-    
     useQueryResult(createLocationResult);
     useQueryResult(updateLocationResult);
     useQueryResult(removeLocationResult);

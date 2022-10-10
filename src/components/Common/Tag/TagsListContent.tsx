@@ -84,7 +84,7 @@ export const TagsListContent = (props: ITagsListContentProps) => {
                             handleInputConfirm(query);
                         }
                     }}
-                    options={availableTags?.map(t => ({value: t.name})) ?? []}
+                    options={availableTags.map(t => ({value: t.name})) ?? []}
                     filterOption={(query, option) => {
                         if (!query){
                             return true;
