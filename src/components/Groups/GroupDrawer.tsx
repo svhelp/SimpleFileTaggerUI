@@ -51,7 +51,7 @@ export const GroupDrawer = (props: IGroupDrawerProps) => {
             title={group?.name}
             placement="right"
             onClose={closeDrawer}
-            visible={!!group}
+            open={!!group}
             getContainer={false}
             style={{ position: 'absolute' }}
         >

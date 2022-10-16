@@ -31,7 +31,7 @@ export const LocationDrawer = (props: ILocationDrawerProps) => {
             title={location?.name}
             placement="right"
             onClose={closeDrawer}
-            visible={!!location}
+            open={!!location}
             getContainer={false}
             style={{ position: 'absolute' }}
         >

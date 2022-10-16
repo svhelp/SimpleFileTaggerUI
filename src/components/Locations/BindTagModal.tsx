@@ -13,7 +13,7 @@ export const BindTagModal = (props: IBindTagModalProps) => {
     return (
         <Modal
             title="Add Tag"
-            visible={props.isModalOpen}
+            open={props.isModalOpen}
             onOk={() => props.onAdd(tagValue)}
             onCancel={props.closeModal}>
             <Input placeholder="Tag name" value={tagValue} onChange={(e) => setTagValue(e.target.value)} />

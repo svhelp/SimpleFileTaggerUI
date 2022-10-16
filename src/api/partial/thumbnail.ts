@@ -1,4 +1,4 @@
-import { CommandResult, CommandResultWithOfGuid, SimpleNamedModel, ThumbnailPlainModel } from 'domain/models';
+import { CommandResult, CommandResultWithOfGuid, ThumbnailPlainModel } from 'domain/models';
 import { emptySplitApi as api } from '../emptyApi';
 
 const injectedRtkApi = api.injectEndpoints({
@@ -13,7 +13,7 @@ const injectedRtkApi = api.injectEndpoints({
       query: (queryArg) => ({
         url: `/api/Thumbnail/Add`,
         method: 'POST',
-        body: queryArg.simpleNamedModel,
+        params: { tagId: queryArg.tagId },
       }),
     }),
     thumbnailRemove: build.mutation<
@@ -39,7 +39,7 @@ export type ThumbnailGetApiArg = {
 export type ThumbnailAddApiResponse =
   /** status 200  */ CommandResultWithOfGuid;
 export type ThumbnailAddApiArg = {
-  simpleNamedModel: SimpleNamedModel;
+  tagId?: string;
 };
 export type ThumbnailRemoveApiResponse = /** status 200  */ CommandResult;
 export type ThumbnailRemoveApiArg = {

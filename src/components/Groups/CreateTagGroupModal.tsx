@@ -44,7 +44,7 @@ export const CreateTagGroupModal = (props: ICreateTagGroupModalProps) => {
     return (
         <Modal
             title="New group"
-            visible={props.isModalOpen}
+            open={props.isModalOpen}
             onOk={createTagGroup}
             onCancel={closeModal}>
             <Input placeholder="Group name" value={groupName} onChange={(e) => setGroupName(e.target.value)} />
