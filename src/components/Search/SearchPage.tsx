@@ -1,10 +1,9 @@
 import { AutoComplete, Input, Space } from "antd";
 import { useTagGetQuery } from "api/enchanced/tag";
 import { useSearchGetQuery } from "api/partial/search";
-import { LocationCardContainer } from "components/Common/CardContainer";
+import { LocationContainer } from "components/Common/Location/LocationContainer";
 import { Tab } from "components/Common/Tab/Tab";
 import { TabHeaderContainer, TabContentContainer } from "components/Common/Tab/Tab.styles";
-import { LocationPlainModel } from "domain/models";
 import { useCallback, useState } from "react";
 
 export const SearchPage = () => {
@@ -66,24 +65,9 @@ export const SearchPage = () => {
             <TabContentContainer>
                 <Space wrap>
                     {(data ?? []).map(loc =>
-                        <LocationCard key={loc.id} location={loc} openDirectory={openDirectory} />)}
+                        <LocationContainer key={loc.id} title={loc.name} onClick={() => openDirectory(loc.path)} />)}
                 </Space>
             </TabContentContainer>
         </Tab>
     )
 }
-
-interface ILocationCardProps {
-    openDirectory: (path: string) => void;
-    location: LocationPlainModel;
-}
-
-export const LocationCard = ({ location, openDirectory }: ILocationCardProps) => {
-    return (
-        <LocationCardContainer onClick={() => openDirectory(location.path)}>
-            <p>
-                {location.name}
-            </p>
-        </LocationCardContainer>
-    );
-};

@@ -1,7 +1,6 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { Space } from "antd";
-import { TagContainer } from "components/Common/Tag/TagContainer";
 import { useState, useCallback } from "react";
 import { BindTagModal } from "./BindTagModal";
 import { LocationModel } from "domain/models";
@@ -9,6 +8,7 @@ import { useTagGetQuery } from "api/enchanced/tag";
 import { useQueryResult } from "customHooks/useQueryResult";
 import { useLocationAddTagsMutation, useLocationRemoveMutation, useLocationSetTagsMutation } from "api/enchanced/location";
 import { LocationDrawer } from "./LocationDrawer";
+import { LocationContainer } from "components/Common/Location/LocationContainer";
 
 interface ILocationContentProps {
     locations: LocationModel[];
@@ -54,7 +54,7 @@ export const LocationContent = ({ locations }: ILocationContentProps) => {
                     </LocationSubheader>
                     <Space wrap>
                         {location.children.map(l =>
-                            <TagContainer
+                            <LocationContainer
                                 key={l.path}
                                 title={l.name}
                                 isSelected={false}

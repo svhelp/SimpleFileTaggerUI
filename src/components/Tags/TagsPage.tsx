@@ -2,13 +2,13 @@ import {  Space } from "antd";
 import { NewCard } from "components/Common/NewCard/NewCard";
 import { Tab } from "components/Common/Tab/Tab";
 import { TabHeaderContainer, TabContentContainer } from "components/Common/Tab/Tab.styles";
-import { TagContainer } from 'components/Common/Tag/TagContainer';
 import { useState } from "react";
 import { AddTagModal } from "./AddTagModal";
 import { useQueryResult } from 'customHooks/useQueryResult'
 import { useTagGetQuery, useTagRemoveMutation } from "api/enchanced/tag";
 import { TagDrawer } from "./TagDrawer";
 import { TagPlainModel } from "domain/models";
+import { TagCard } from "./TagCard";
 
 export const TagsPage = () => {
 
@@ -16,10 +16,11 @@ export const TagsPage = () => {
 
     const { data: availableTags, isFetching, isError, error } = useTagGetQuery();
 
-    const [ isCreatingTag, setIsCreatingTag ] = useState(false);
     const [ removeTag, removeTagResult ] = useTagRemoveMutation();
 
     useQueryResult(removeTagResult);
+
+    const [ isCreatingTag, setIsCreatingTag ] = useState(false);
 
     return (
         <Tab isError={isError} isFetching={isFetching} error={error}>
@@ -31,12 +32,12 @@ export const TagsPage = () => {
             <TabContentContainer>
                 <Space wrap>
                     {availableTags?.map(tag =>
-                        <TagContainer
+                        <TagCard
                             key={tag.id}
-                            title={tag.name}
+                            tag={tag}
                             isSelected={false}
-                            onClick={() => setSelectedTag(tag)}
-                            onRemove={() => removeTag({id: tag.id})} />)}
+                            setSelectedTag={() => setSelectedTag(tag)}
+                            removeTag={() => removeTag({id: tag.id})} />)}
                     <NewCard onClick={() => setIsCreatingTag(true)}/>
                 </Space>
             </TabContentContainer>

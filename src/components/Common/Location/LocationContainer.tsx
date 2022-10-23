@@ -3,31 +3,20 @@ import {
     EditOutlined,
     DeleteOutlined,
   } from '@ant-design/icons';
-import { TagBackground, TagCardContainer, TagNameContainer, TagToolbar } from "./TagContainer.styles"
+import { LocationCardContainer, LocationNameContainer, LocationToolbar } from "./LocationContainer.styles";
 
-interface ITagContainerProps {
+interface ILocationContainerProps {
     title: string;
-    background?: string;
     isSelected?: boolean;
     onClick?: () => void;
     onEdit?: () => void;
     onRemove?: () => void;
 }
 
-export const TagContainer = (props: ITagContainerProps) => {
+export const LocationContainer = (props: ILocationContainerProps) => {
     return (
-        <TagCardContainer hoverable>
-
-            {!!props.background &&
-                <TagBackground src={`data:image/jpeg;base64,${props.background}`} />}
-
-            <TagNameContainer onClick={props.onClick}>
-                <p>
-                    {props.title}
-                </p>
-            </TagNameContainer>
-            
-            <TagToolbar>
+        <LocationCardContainer hoverable>
+            <LocationToolbar>
                 {props.onEdit &&
                     <Button type="text" onClick={props.onEdit}>
                         <EditOutlined />
@@ -41,12 +30,18 @@ export const TagContainer = (props: ITagContainerProps) => {
                         cancelText="No"
                     >
                         <Button type="text">
-                            <DeleteOutlined color="#000" />
+                            <DeleteOutlined />
                         </Button>
                     </Popconfirm>
                 }
                 
-            </TagToolbar>
-        </TagCardContainer>
+            </LocationToolbar>
+
+            <LocationNameContainer onClick={props.onClick}>
+                <p>
+                    {props.title}
+                </p>
+            </LocationNameContainer>
+        </LocationCardContainer>
     )
 }
