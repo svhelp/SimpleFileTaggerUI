@@ -4,8 +4,7 @@ import { Tab } from "components/Common/Tab/Tab";
 import { TabHeaderContainer, TabContentContainer } from "components/Common/Tab/Tab.styles";
 import { useState } from "react";
 import { AddTagModal } from "./AddTagModal";
-import { useQueryResult } from 'customHooks/useQueryResult'
-import { useTagGetQuery, useTagRemoveMutation } from "api/enchanced/tag";
+import { useTagGetQuery } from "api/enchanced/tag";
 import { TagDrawer } from "./TagDrawer";
 import { TagPlainModel } from "domain/models";
 import { TagCard } from "./TagCard";
@@ -15,10 +14,6 @@ export const TagsPage = () => {
     const [ selectedTag, setSelectedTag ] = useState<TagPlainModel | undefined>(undefined);
 
     const { data: availableTags, isFetching, isError, error } = useTagGetQuery();
-
-    const [ removeTag, removeTagResult ] = useTagRemoveMutation();
-
-    useQueryResult(removeTagResult);
 
     const [ isCreatingTag, setIsCreatingTag ] = useState(false);
 
@@ -36,8 +31,7 @@ export const TagsPage = () => {
                             key={tag.id}
                             tag={tag}
                             isSelected={false}
-                            setSelectedTag={() => setSelectedTag(tag)}
-                            removeTag={() => removeTag({id: tag.id})} />)}
+                            setSelectedTag={() => setSelectedTag(tag)} />)}
                     <NewCard onClick={() => setIsCreatingTag(true)}/>
                 </Space>
             </TabContentContainer>

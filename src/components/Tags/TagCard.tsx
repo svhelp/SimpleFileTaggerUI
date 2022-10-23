@@ -5,12 +5,11 @@ import { useThumbnailGetQuery } from "api/enchanced/thumbnail";
 interface ITagCardProps {
     tag: TagPlainModel
     isSelected: boolean;
-    removeTag: () => void;
     setSelectedTag: () => void;
 }
 
 export const TagCard = (props: ITagCardProps) => {
-    const { tag, isSelected, removeTag, setSelectedTag } = props;
+    const { tag, isSelected, setSelectedTag } = props;
 
     const { data: thumbnail, isFetching, isError, error } = useThumbnailGetQuery({ id: tag?.id });
 
@@ -20,7 +19,6 @@ export const TagCard = (props: ITagCardProps) => {
             title={tag.name}
             background={thumbnail?.image}
             isSelected={isSelected}
-            onClick={setSelectedTag}
-            onRemove={removeTag} />
+            onClick={setSelectedTag} />
     )
 }

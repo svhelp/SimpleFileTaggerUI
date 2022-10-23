@@ -34,14 +34,6 @@ export const TagBackground = styled.img`
     transition: filter 0.2s;
 `
 
-export const TagToolbar = styled.div`
-    display: flex;
-    justify-content: flex-end;
-
-    position: absolute;
-    width: 100%;
-`
-
 export const TagNameContainer = styled.div`
     width: 100%;
     height: 100%;
@@ -49,6 +41,8 @@ export const TagNameContainer = styled.div`
     justify-content: center;
     align-items: center;
         
+    z-index: 1;
+
     p {
         background: #0006;
         width: 100%;
@@ -63,8 +57,6 @@ export const TagNameContainer = styled.div`
         color: white;
         text-transform: uppercase;
         font-size: 18px;
-
-        z-index: 1;
         
         transition: font-size 0.2s;
     }

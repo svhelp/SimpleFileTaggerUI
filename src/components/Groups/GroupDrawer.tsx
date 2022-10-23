@@ -1,11 +1,11 @@
-import { Drawer, Space, Button } from "antd";
+import { Drawer, Button, Divider } from "antd";
 import { TagsListContent } from "components/Common/Tag/TagsListContent";
 import { TagGroupPlainModel, TagPlainModel } from "domain/models";
 import { useState, useEffect } from "react";
 import { useQueryResult } from "customHooks/useQueryResult";
-import styled from "styled-components";
 import { useTagGetQuery } from "api/enchanced/tag";
-import { useTagGroupUpdateMutation } from "api/enchanced/taggroup";
+import { useTagGroupRemoveMutation, useTagGroupUpdateMutation } from "api/enchanced/taggroup";
+import { DrawerButtonContainer, DrawerContent } from "components/Common/Drawer.styles";
 
 interface IGroupDrawerProps {
     group?: TagGroupPlainModel;
@@ -20,7 +20,9 @@ export const GroupDrawer = (props: IGroupDrawerProps) => {
     const { data: availableTags, isFetching: isTagsFetching, isError: isTagsError, error: tagsError } = useTagGetQuery();
 
     const [ updateTagGroupQuery, updateTagGroupQueryResult ] = useTagGroupUpdateMutation();
+    const [ removeTagGroup, removeTagGroupResult ] = useTagGroupRemoveMutation();
     
+    useQueryResult(removeTagGroupResult);
     useQueryResult(updateTagGroupQueryResult);
 
     useEffect(() => {
@@ -53,6 +55,7 @@ export const GroupDrawer = (props: IGroupDrawerProps) => {
             onClose={closeDrawer}
             open={!!group}
             getContainer={false}
+            closable={false}
             style={{ position: 'absolute' }}
         >
             <DrawerContent>
@@ -61,22 +64,19 @@ export const GroupDrawer = (props: IGroupDrawerProps) => {
                     availableTags={availableTags ?? []}
                     updateTags={setTags}
                 />
-                <Space>
+                <DrawerButtonContainer>
                     <Button onClick={closeDrawer}>Cancel</Button>
                     <Button type="primary" onClick={updateTags}>
                         Save
                     </Button>
-                </Space>
+                </DrawerButtonContainer>
+                <Divider />
+                <Button
+                    onClick={() => removeTagGroup({id: group?.id})}
+                    danger>
+                    Remove tag
+                </Button>
             </DrawerContent>
         </Drawer>
     );
 }
-
-const DrawerContent = styled.div`
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: space-between;
-
-    height: 100%;
-`

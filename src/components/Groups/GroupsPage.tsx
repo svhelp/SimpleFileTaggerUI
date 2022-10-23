@@ -8,18 +8,13 @@ import { useState } from "react";
 import { CreateTagGroupModal } from "./CreateTagGroupModal";
 import { GroupDrawer } from "./GroupDrawer";
 import { TagGroupPlainModel } from "domain/models";
-import { useQueryResult } from "customHooks/useQueryResult";
-import { useTagGroupGetQuery, useTagGroupRemoveMutation } from "api/enchanced/taggroup";
+import { useTagGroupGetQuery } from "api/enchanced/taggroup";
 
 export const GroupsPage = () => {
     const [ isCreatingGroup, setIsCreatingGroup ] = useState(false);
     const [ selectedGroup, setSelectedGroup ] = useState<TagGroupPlainModel | undefined>(undefined);
 
     const { data: tagGroups, isFetching, isError, error } = useTagGroupGetQuery();
-
-    const [ removeTagGroup, removeTagGroupResult ] = useTagGroupRemoveMutation();
-    
-    useQueryResult(removeTagGroupResult);
     
     return (
         <Tab isError={isError} isFetching={isFetching} error={error}>
@@ -35,8 +30,7 @@ export const GroupsPage = () => {
                             key={tagGroup.id}
                             title={tagGroup.name}
                             isSelected={false}
-                            onClick={() => setSelectedGroup(tagGroup)}
-                            onRemove={() => removeTagGroup({id: tagGroup.id})} />)}
+                            onClick={() => setSelectedGroup(tagGroup)} />)}
                     <NewCard onClick={() => setIsCreatingGroup(true)}/>
                 </Space>
 
