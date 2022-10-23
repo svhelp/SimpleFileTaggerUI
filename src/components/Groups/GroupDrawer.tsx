@@ -74,7 +74,7 @@ export const GroupDrawer = (props: IGroupDrawerProps) => {
                 <Button
                     onClick={() => removeTagGroup({id: group?.id})}
                     danger>
-                    Remove tag
+                    Remove group
                 </Button>
             </DrawerContent>
         </Drawer>

@@ -1,13 +1,15 @@
-import { Button, Popconfirm } from "antd"
+import { Button, Checkbox, Popconfirm } from "antd"
 import {
     EditOutlined,
     DeleteOutlined,
   } from '@ant-design/icons';
 import { LocationCardContainer, LocationNameContainer, LocationToolbar } from "./LocationContainer.styles";
+import { CheckboxChangeEvent } from "antd/lib/checkbox";
 
 interface ILocationContainerProps {
     title: string;
     isSelected?: boolean;
+    onSelect?: (e: CheckboxChangeEvent) => void;
     onClick?: () => void;
     onEdit?: () => void;
     onRemove?: () => void;
@@ -16,6 +18,15 @@ interface ILocationContainerProps {
 export const LocationContainer = (props: ILocationContainerProps) => {
     return (
         <LocationCardContainer hoverable>
+            {props.onSelect &&
+                <Checkbox value={props.isSelected} onChange={props.onSelect} /> }
+
+            <LocationNameContainer onClick={props.onClick}>
+                <p>
+                    {props.title}
+                </p>
+            </LocationNameContainer>
+
             <LocationToolbar>
                 {props.onEdit &&
                     <Button type="text" onClick={props.onEdit}>
@@ -37,11 +48,6 @@ export const LocationContainer = (props: ILocationContainerProps) => {
                 
             </LocationToolbar>
 
-            <LocationNameContainer onClick={props.onClick}>
-                <p>
-                    {props.title}
-                </p>
-            </LocationNameContainer>
         </LocationCardContainer>
     )
 }

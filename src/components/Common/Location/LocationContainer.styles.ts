@@ -2,8 +2,7 @@ import { Card } from "antd";
 import styled from "styled-components";
 
 export const LocationCardContainer = styled(Card)`
-    width: 240px;
-    height: 160px;
+    width: 100%;
 
     .ant-card-body {
         display: flex;
@@ -11,12 +10,8 @@ export const LocationCardContainer = styled(Card)`
         height: 100%;
         padding: 0;
 
-        cursor: pointer;
-
-        p {
-            overflow-wrap: anywhere;
-            text-overflow: ellipsis;
-            overflow: hidden;
+        label {
+            padding: 4px;
         }
     }
 `
@@ -24,15 +19,20 @@ export const LocationCardContainer = styled(Card)`
 export const LocationToolbar = styled.div`
     display: flex;
     justify-content: flex-end;
-
-    position: absolute;
-    width: 100%;
 `
 
 export const LocationNameContainer = styled.div`
-    width: 100%;
-    height: 100%;
     display: flex;
-    justify-content: center;
     align-items: center;
+
+    width: 100%;
+
+    cursor: pointer;
+
+    p {
+        overflow-wrap: anywhere;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        margin: 0;
+    }
 `

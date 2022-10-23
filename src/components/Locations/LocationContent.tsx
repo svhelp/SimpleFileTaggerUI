@@ -1,6 +1,5 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import { Space } from "antd";
 import { useState, useCallback } from "react";
 import { BindTagModal } from "./BindTagModal";
 import { LocationModel } from "domain/models";
@@ -9,6 +8,7 @@ import { useQueryResult } from "customHooks/useQueryResult";
 import { useLocationAddTagsMutation, useLocationRemoveMutation, useLocationSetTagsMutation } from "api/enchanced/location";
 import { LocationDrawer } from "./LocationDrawer";
 import { LocationContainer } from "components/Common/Location/LocationContainer";
+import { Space } from "antd";
 
 interface ILocationContentProps {
     locations: LocationModel[];
@@ -17,6 +17,7 @@ interface ILocationContentProps {
 export const LocationContent = ({ locations }: ILocationContentProps) => {
     const navigate = useNavigate();
 
+    const [ selectedLocations, setSelectedLocations ] = useState<string[]>([]);
     const [ isAddingTag, setIsAddingTag ] = useState(false);
     const [ selectedLocation, setSelectedLocation ] = useState<LocationModel | undefined>(undefined);
 
@@ -42,6 +43,10 @@ export const LocationContent = ({ locations }: ILocationContentProps) => {
     });
 
     const onTabClick = useCallback((location: LocationModel) => {
+        if (location.children.length === 0){
+            return;
+        }
+
         navigate(`${path.pathname}/${location.name}`, { replace: true });
     }, [navigate]);
 
@@ -52,12 +57,19 @@ export const LocationContent = ({ locations }: ILocationContentProps) => {
                     <LocationSubheader>
                         Locations
                     </LocationSubheader>
-                    <Space wrap>
+                    <Space direction="vertical" style={{ display: 'flex' }}>
                         {location.children.map(l =>
                             <LocationContainer
                                 key={l.path}
                                 title={l.name}
-                                isSelected={false}
+                                isSelected={selectedLocations.includes(l.id)}
+                                onSelect={(e) => setSelectedLocations(state => {
+                                    if (e.target.checked){
+                                        return state.concat([l.id]);
+                                    } else {
+                                        return state.filter(id => id !== l.id);
+                                    }
+                                })}
                                 onEdit={() => setSelectedLocation(l)}
                                 onClick={() => onTabClick(l)}
                                 onRemove={() => removeLocation({id: l.id})} />)}

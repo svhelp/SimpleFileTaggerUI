@@ -1,8 +1,10 @@
-import { Drawer, Space, Button } from "antd";
+import { Drawer, Button, Divider } from "antd";
+import { DrawerButtonContainer, DrawerContent } from "components/Common/Drawer.styles";
 import { TagsListContent } from "components/Common/Tag/TagsListContent";
 import { LocationModel, TagPlainModel } from "domain/models";
 import { useState, useEffect } from "react";
-import styled from "styled-components";
+import { useQueryResult } from "customHooks/useQueryResult";
+import { useLocationRemoveMutation } from "api/enchanced/location";
 
 interface ILocationDrawerProps {
     location?: LocationModel;
@@ -15,6 +17,9 @@ export const LocationDrawer = (props: ILocationDrawerProps) => {
     const { location, availableTags, updateTags, closeDrawer } = props;
 
     const [ tags, setTags ] = useState<TagPlainModel[]>([]);
+    const [ removeLocation, removeLocationResult ] = useLocationRemoveMutation();
+    
+    useQueryResult(removeLocationResult);
 
     useEffect(() => {
         if (!location){
@@ -33,6 +38,7 @@ export const LocationDrawer = (props: ILocationDrawerProps) => {
             onClose={closeDrawer}
             open={!!location}
             getContainer={false}
+            closable={false}
             style={{ position: 'absolute' }}
         >
             <DrawerContent>
@@ -41,22 +47,19 @@ export const LocationDrawer = (props: ILocationDrawerProps) => {
                     availableTags={availableTags}
                     updateTags={setTags}
                 />
-                <Space>
+                <DrawerButtonContainer>
                     <Button onClick={closeDrawer}>Cancel</Button>
                     <Button type="primary" onClick={() => updateTags(tags.map(t => t.id))}>
                         Save
                     </Button>
-                </Space>
+                </DrawerButtonContainer>
+                <Divider />
+                <Button
+                    onClick={() => removeLocation({id: location?.id})}
+                    danger>
+                    Remove location
+                </Button>
             </DrawerContent>
         </Drawer>
     );
 }
-
-const DrawerContent = styled.div`
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: space-between;
-
-    height: 100%;
-`
