@@ -8,9 +8,11 @@ import { useTagGetQuery } from "api/enchanced/tag";
 import { TagDrawer } from "./TagDrawer";
 import { TagPlainModel } from "domain/models";
 import { TagCard } from "./TagCard";
+import { useSelectedItems } from "customHooks/useSelectedItems";
 
 export const TagsPage = () => {
 
+    const [ selectedTags, setSelectedTags ] = useSelectedItems();
     const [ selectedTag, setSelectedTag ] = useState<TagPlainModel | undefined>(undefined);
 
     const { data: availableTags, isFetching, isError, error } = useTagGetQuery();
@@ -30,7 +32,8 @@ export const TagsPage = () => {
                         <TagCard
                             key={tag.id}
                             tag={tag}
-                            isSelected={false}
+                            isSelected={selectedTags.includes(tag.id)}
+                            onSelect={(e) => setSelectedTags(tag.id, e)}
                             setSelectedTag={() => setSelectedTag(tag)} />)}
                     <NewCard onClick={() => setIsCreatingTag(true)}/>
                 </Space>

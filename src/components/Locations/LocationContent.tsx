@@ -9,6 +9,7 @@ import { useLocationAddTagsMutation, useLocationRemoveMutation, useLocationSetTa
 import { LocationDrawer } from "./LocationDrawer";
 import { LocationContainer } from "components/Common/Location/LocationContainer";
 import { Space } from "antd";
+import { useSelectedItems } from "customHooks/useSelectedItems";
 
 interface ILocationContentProps {
     locations: LocationModel[];
@@ -17,7 +18,7 @@ interface ILocationContentProps {
 export const LocationContent = ({ locations }: ILocationContentProps) => {
     const navigate = useNavigate();
 
-    const [ selectedLocations, setSelectedLocations ] = useState<string[]>([]);
+    const [ selectedLocations, setSelectedLocations ] = useSelectedItems();
     const [ isAddingTag, setIsAddingTag ] = useState(false);
     const [ selectedLocation, setSelectedLocation ] = useState<LocationModel | undefined>(undefined);
 
@@ -63,13 +64,7 @@ export const LocationContent = ({ locations }: ILocationContentProps) => {
                                 key={l.path}
                                 title={l.name}
                                 isSelected={selectedLocations.includes(l.id)}
-                                onSelect={(e) => setSelectedLocations(state => {
-                                    if (e.target.checked){
-                                        return state.concat([l.id]);
-                                    } else {
-                                        return state.filter(id => id !== l.id);
-                                    }
-                                })}
+                                onSelect={(e) => setSelectedLocations(l.id, e)}
                                 onEdit={() => setSelectedLocation(l)}
                                 onClick={() => onTabClick(l)}
                                 onRemove={() => removeLocation({id: l.id})} />)}

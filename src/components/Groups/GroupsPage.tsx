@@ -9,8 +9,11 @@ import { CreateTagGroupModal } from "./CreateTagGroupModal";
 import { GroupDrawer } from "./GroupDrawer";
 import { TagGroupPlainModel } from "domain/models";
 import { useTagGroupGetQuery } from "api/enchanced/taggroup";
+import { useSelectedItems } from "customHooks/useSelectedItems";
 
 export const GroupsPage = () => {
+    
+    const [ selectedGroups, setSelectedGroups ] = useSelectedItems();
     const [ isCreatingGroup, setIsCreatingGroup ] = useState(false);
     const [ selectedGroup, setSelectedGroup ] = useState<TagGroupPlainModel | undefined>(undefined);
 
@@ -29,7 +32,8 @@ export const GroupsPage = () => {
                         <TagContainer
                             key={tagGroup.id}
                             title={tagGroup.name}
-                            isSelected={false}
+                            isSelected={selectedGroups.includes(tagGroup.id)}
+                            onSelect={(e) => setSelectedGroups(tagGroup.id, e)}
                             onClick={() => setSelectedGroup(tagGroup)} />)}
                     <NewCard onClick={() => setIsCreatingGroup(true)}/>
                 </Space>

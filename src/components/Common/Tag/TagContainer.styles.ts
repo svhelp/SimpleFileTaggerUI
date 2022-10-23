@@ -13,6 +13,11 @@ export const TagCardContainer = styled(Card)`
 
         cursor: pointer;
 
+        label {
+            position: absolute;
+            margin: 4px;
+        }
+
         :hover img {
             filter: brightness(0.7);
         }
