@@ -1,9 +1,10 @@
-import { InputRef, Tag, Tooltip, AutoComplete, Input } from "antd";
+import { InputRef, Tag, Tooltip, AutoComplete, Input, Space } from "antd";
 import {
     PlusOutlined,
   } from '@ant-design/icons';
 import { useRef, useState, useEffect } from "react";
 import { TagPlainModel } from "domain/models";
+import styled from "styled-components";
 
 interface ITagsListContentProps {
     tags: TagPlainModel[];
@@ -47,7 +48,7 @@ export const TagsListContent = (props: ITagsListContentProps) => {
     }
 
     return (
-        <div>
+        <TagsContainer wrap>
             {tags.map(tag => {
                 const isLongTag = tag.name.length > 20;
 
@@ -109,6 +110,10 @@ export const TagsListContent = (props: ITagsListContentProps) => {
                     <PlusOutlined /> Add Tag
                 </Tag>
             )}
-        </div>
+        </TagsContainer>
     )
 }
+
+const TagsContainer = styled(Space)`
+    gap: 8px 0 !important;
+`

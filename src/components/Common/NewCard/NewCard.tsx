@@ -4,12 +4,19 @@ import {
 import { NewCardContainer } from './NewCard.styles';
 
 interface INewCardProps {
+    width: string;
+    height: string;
+
     onClick: () => void;
 }
 
 export const NewCard = (props: INewCardProps) => {
     return (
-        <NewCardContainer hoverable onClick={props.onClick}>
+        <NewCardContainer
+            width={props.width}
+            height={props.height}
+            onClick={props.onClick}
+            hoverable>
             <PlusOutlined />
         </NewCardContainer>
     )

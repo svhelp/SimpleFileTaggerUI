@@ -4,21 +4,25 @@ import { TagsListContent } from "components/Common/Tag/TagsListContent";
 import { LocationModel, TagPlainModel } from "domain/models";
 import { useState, useEffect } from "react";
 import { useQueryResult } from "customHooks/useQueryResult";
-import { useLocationRemoveMutation } from "api/enchanced/location";
+import { useLocationRemoveMutation, useLocationSetTagsMutation } from "api/enchanced/location";
+import { useTagGetQuery } from "api/enchanced/tag";
 
 interface ILocationDrawerProps {
     location?: LocationModel;
-    availableTags: TagPlainModel[];
-    updateTags: (ids: string[]) => void;
     closeDrawer: () => void;
 }
 
 export const LocationDrawer = (props: ILocationDrawerProps) => {
-    const { location, availableTags, updateTags, closeDrawer } = props;
+    const { location, closeDrawer } = props;
 
     const [ tags, setTags ] = useState<TagPlainModel[]>([]);
+
+    const { data: availableTags, isFetching: isTagsFetching, isError: isTagsError, error: tagsError } = useTagGetQuery();
+
     const [ removeLocation, removeLocationResult ] = useLocationRemoveMutation();
+    const [ updateLocationQuery, updateLocationResult ] = useLocationSetTagsMutation();
     
+    useQueryResult(updateLocationResult);
     useQueryResult(removeLocationResult);
 
     useEffect(() => {
@@ -27,9 +31,19 @@ export const LocationDrawer = (props: ILocationDrawerProps) => {
             return;
         }
 
-        setTags(availableTags.filter(t => location?.tagIds.includes(t.id)));
+        setTags(availableTags?.filter(t => location?.tagIds.includes(t.id)) ?? []);
     }, [ location ]);
     
+    const updateLocation = () => {
+        const model = {
+            updateLocationCommandModel: {
+                path: location!.path,
+                tags: tags.map(t => t.id)
+            }
+        }
+
+        updateLocationQuery(model);
+    }
 
     return (
         <Drawer
@@ -44,12 +58,12 @@ export const LocationDrawer = (props: ILocationDrawerProps) => {
             <DrawerContent>
                 <TagsListContent
                     tags={tags}
-                    availableTags={availableTags}
+                    availableTags={availableTags ?? []}
                     updateTags={setTags}
                 />
                 <DrawerButtonContainer>
                     <Button onClick={closeDrawer}>Cancel</Button>
-                    <Button type="primary" onClick={() => updateTags(tags.map(t => t.id))}>
+                    <Button type="primary" onClick={updateLocation}>
                         Save
                     </Button>
                 </DrawerButtonContainer>

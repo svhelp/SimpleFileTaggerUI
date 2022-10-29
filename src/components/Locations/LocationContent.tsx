@@ -1,15 +1,15 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { useState, useCallback } from "react";
-import { BindTagModal } from "./BindTagModal";
+import { CreateLocationModal } from "./CreateLocationModal";
 import { LocationModel } from "domain/models";
-import { useTagGetQuery } from "api/enchanced/tag";
 import { useQueryResult } from "customHooks/useQueryResult";
-import { useLocationAddTagsMutation, useLocationRemoveMutation, useLocationSetTagsMutation } from "api/enchanced/location";
+import { useLocationRemoveMutation } from "api/enchanced/location";
 import { LocationDrawer } from "./LocationDrawer";
 import { LocationContainer } from "components/Common/Location/LocationContainer";
 import { Space } from "antd";
 import { useSelectedItems } from "customHooks/useSelectedItems";
+import { LocationNewCard } from "components/Common/Location/LocationNewCard";
 
 interface ILocationContentProps {
     locations: LocationModel[];
@@ -19,17 +19,11 @@ export const LocationContent = ({ locations }: ILocationContentProps) => {
     const navigate = useNavigate();
 
     const [ selectedLocations, setSelectedLocations ] = useSelectedItems();
-    const [ isAddingTag, setIsAddingTag ] = useState(false);
+    const [ isAddingLocation, setIsAddingLocation ] = useState(false);
     const [ selectedLocation, setSelectedLocation ] = useState<LocationModel | undefined>(undefined);
 
-    const { data: tags, isFetching: isTagsFetching, isError: isTagsError, error: tagsError } = useTagGetQuery();
-
-    const [ createLocation, createLocationResult ] = useLocationAddTagsMutation();
-    const [ updateLocation, updateLocationResult ] = useLocationSetTagsMutation();
     const [ removeLocation, removeLocationResult ] = useLocationRemoveMutation();
     
-    useQueryResult(createLocationResult);
-    useQueryResult(updateLocationResult);
     useQueryResult(removeLocationResult);
 
     const path = useLocation();
@@ -68,25 +62,18 @@ export const LocationContent = ({ locations }: ILocationContentProps) => {
                                 onEdit={() => setSelectedLocation(l)}
                                 onClick={() => onTabClick(l)}
                                 onRemove={() => removeLocation({id: l.id})} />)}
+                        <LocationNewCard onClick={() => setIsAddingLocation(true)} />
                     </Space>
                 </>}
 
             <LocationDrawer
                 location={selectedLocation}
-                availableTags={tags ?? []}
-                updateTags={ids => updateLocation({updateLocationCommandModel: {path: selectedLocation!.path, tags: ids }})}
                 closeDrawer={() => setSelectedLocation(undefined)}
             />
 
-            <BindTagModal
-                isModalOpen={isAddingTag}
-                onAdd={(tags) => createLocation({
-                    updateLocationCommandModel: {
-                        path: location.path,
-                        tags: tags.split(' ')
-                    }
-                })}
-                closeModal={() => setIsAddingTag(false)} />
+            <CreateLocationModal
+                isModalOpen={isAddingLocation}
+                closeModal={() => setIsAddingLocation(false)} />
         </>
     );
 };

@@ -1,4 +1,4 @@
-import { Input, Modal } from "antd";
+import { Divider, Input, Modal } from "antd";
 import { useTagGroupUpdateMutation } from "api/enchanced/taggroup";
 import { useState } from "react";
 import { useQueryResult } from "customHooks/useQueryResult";
@@ -48,6 +48,7 @@ export const CreateTagGroupModal = (props: ICreateTagGroupModalProps) => {
             onOk={createTagGroup}
             onCancel={closeModal}>
             <Input placeholder="Group name" value={groupName} onChange={(e) => setGroupName(e.target.value)} />
+            <Divider />
             <TagsListContent
                 tags={tags}
                 availableTags={availableTags ?? []}

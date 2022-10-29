@@ -1,6 +1,5 @@
 import { Space } from "antd";
 
-import { NewCard } from "components/Common/NewCard/NewCard";
 import { Tab } from "components/Common/Tab/Tab";
 import { TabHeaderContainer, TabContentContainer } from "components/Common/Tab/Tab.styles";
 import { TagContainer } from "components/Common/Tag/TagContainer";
@@ -10,6 +9,7 @@ import { GroupDrawer } from "./GroupDrawer";
 import { TagGroupPlainModel } from "domain/models";
 import { useTagGroupGetQuery } from "api/enchanced/taggroup";
 import { useSelectedItems } from "customHooks/useSelectedItems";
+import { TagNewCard } from "components/Common/Tag/TagNewCard";
 
 export const GroupsPage = () => {
     
@@ -35,7 +35,7 @@ export const GroupsPage = () => {
                             isSelected={selectedGroups.includes(tagGroup.id)}
                             onSelect={(e) => setSelectedGroups(tagGroup.id, e)}
                             onClick={() => setSelectedGroup(tagGroup)} />)}
-                    <NewCard onClick={() => setIsCreatingGroup(true)}/>
+                    <TagNewCard onClick={() => setIsCreatingGroup(true)}/>
                 </Space>
 
             </TabContentContainer>

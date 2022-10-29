@@ -1,5 +1,4 @@
 import {  Space } from "antd";
-import { NewCard } from "components/Common/NewCard/NewCard";
 import { Tab } from "components/Common/Tab/Tab";
 import { TabHeaderContainer, TabContentContainer } from "components/Common/Tab/Tab.styles";
 import { useState } from "react";
@@ -9,6 +8,7 @@ import { TagDrawer } from "./TagDrawer";
 import { TagPlainModel } from "domain/models";
 import { TagCard } from "./TagCard";
 import { useSelectedItems } from "customHooks/useSelectedItems";
+import { TagNewCard } from "components/Common/Tag/TagNewCard";
 
 export const TagsPage = () => {
 
@@ -35,7 +35,7 @@ export const TagsPage = () => {
                             isSelected={selectedTags.includes(tag.id)}
                             onSelect={(e) => setSelectedTags(tag.id, e)}
                             setSelectedTag={() => setSelectedTag(tag)} />)}
-                    <NewCard onClick={() => setIsCreatingTag(true)}/>
+                    <TagNewCard onClick={() => setIsCreatingTag(true)}/>
                 </Space>
             </TabContentContainer>
 

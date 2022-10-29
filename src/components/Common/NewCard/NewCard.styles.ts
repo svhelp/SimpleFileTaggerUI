@@ -1,9 +1,14 @@
 import { Card } from "antd";
 import styled from "styled-components";
 
-export const NewCardContainer = styled(Card)`
-    width: 240px;
-    height: 160px;
+interface NewCardContainerProps {
+    width: string;
+    height: string;
+}
+
+export const NewCardContainer = styled(Card)<NewCardContainerProps>`
+    width: ${({width}) => width};
+    height: ${({height}) => height};
 
     .ant-card-body {
         width: 100%;
@@ -11,6 +16,8 @@ export const NewCardContainer = styled(Card)`
         display: flex;
         justify-content: center;
         align-items: center;
+
+        padding: 0;
 
         cursor: pointer;
 
