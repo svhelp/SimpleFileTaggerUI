@@ -19,7 +19,7 @@ export const LocationContainer = (props: ILocationContainerProps) => {
     return (
         <LocationCardContainer hoverable>
             {props.onSelect &&
-                <Checkbox value={props.isSelected} onChange={props.onSelect} /> }
+                <Checkbox checked={props.isSelected} onChange={props.onSelect} /> }
 
             <LocationNameContainer onClick={props.onClick}>
                 <p>

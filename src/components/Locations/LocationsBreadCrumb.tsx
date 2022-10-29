@@ -4,7 +4,8 @@ import { Link, useLocation } from "react-router-dom";
 
 export const LocationsBreadCrumb = () => {
     const location = useLocation();
-    const pathSnippets = location.pathname.split('/').filter(i => i).slice(1);
+    const pathElements = location.pathname.split('/').filter(i => i)
+    const pathSnippets = pathElements.slice(1);
 
     const extraBreadcrumbItems = pathSnippets.map((pathSnippet, index) => {
         const url = `/locations/${pathSnippets.slice(0, index + 1).join('/')}`;

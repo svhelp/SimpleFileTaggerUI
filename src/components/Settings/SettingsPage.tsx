@@ -1,3 +1,7 @@
+import { TabHeader } from "components/Common/Tab/TabHeader"
+
 export const SettingsPage = () => {
-    return <div>Settings page</div>
+    return (
+        <TabHeader title="Settings"/>
+    )
 }

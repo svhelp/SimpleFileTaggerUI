@@ -42,7 +42,7 @@ export const LocationContent = ({ locations }: ILocationContentProps) => {
             return;
         }
 
-        navigate(`${path.pathname}/${location.name}`, { replace: true });
+        navigate(`${path.pathname}/${location.name}`);
     }, [navigate]);
 
     return (

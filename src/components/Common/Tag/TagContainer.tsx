@@ -22,7 +22,7 @@ export const TagContainer = (props: ITagContainerProps) => {
                 <TagBackground src={`data:image/jpeg;base64,${props.background}`} />}
 
             {props.onSelect &&
-                <Checkbox value={props.isSelected} onChange={props.onSelect} /> }
+                <Checkbox checked={props.isSelected} onChange={props.onSelect} /> }
         </TagCardContainer>
     )
 }

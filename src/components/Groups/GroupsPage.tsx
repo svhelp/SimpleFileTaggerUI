@@ -1,7 +1,7 @@
 import { Space } from "antd";
 
 import { Tab } from "components/Common/Tab/Tab";
-import { TabHeaderContainer, TabContentContainer } from "components/Common/Tab/Tab.styles";
+import { TabContentContainer } from "components/Common/Tab/Tab.styles";
 import { TagContainer } from "components/Common/Tag/TagContainer";
 import { useState } from "react";
 import { CreateTagGroupModal } from "./CreateTagGroupModal";
@@ -10,6 +10,7 @@ import { TagGroupPlainModel } from "domain/models";
 import { useTagGroupGetQuery } from "api/enchanced/taggroup";
 import { useSelectedItems } from "customHooks/useSelectedItems";
 import { TagNewCard } from "components/Common/Tag/TagNewCard";
+import { TabHeader } from "components/Common/Tab/TabHeader";
 
 export const GroupsPage = () => {
     
@@ -21,11 +22,7 @@ export const GroupsPage = () => {
     
     return (
         <Tab isError={isError} isFetching={isFetching} error={error}>
-            <TabHeaderContainer>
-                <h1>
-                    Groups
-                </h1>
-            </TabHeaderContainer>
+            <TabHeader title="Groups"/>
             <TabContentContainer>
                 <Space wrap>
                     {tagGroups?.map(tagGroup =>

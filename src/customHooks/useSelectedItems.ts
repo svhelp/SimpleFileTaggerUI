@@ -1,7 +1,7 @@
 import { CheckboxChangeEvent } from "antd/lib/checkbox";
 import { useState } from "react";
 
-export const useSelectedItems = (): [ string[], (elementId: string, e: CheckboxChangeEvent) => void ] => {
+export const useSelectedItems = (): [ string[], (elementId: string, e: CheckboxChangeEvent) => void, () => void ] => {
     const [ selectedItems, setSelectedItems ] = useState<string[]>([]);
 
     const onChange = (elementId: string, e: CheckboxChangeEvent) => {
@@ -14,5 +14,9 @@ export const useSelectedItems = (): [ string[], (elementId: string, e: CheckboxC
         })
     }
 
-    return [ selectedItems, onChange ];
+    const clearSelection = () => {
+        setSelectedItems([]);
+    }
+
+    return [ selectedItems, onChange, clearSelection ];
 }

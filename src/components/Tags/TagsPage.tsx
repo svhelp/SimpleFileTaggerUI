@@ -1,31 +1,53 @@
-import {  Space } from "antd";
+import {  Button, Space } from "antd";
 import { Tab } from "components/Common/Tab/Tab";
 import { TabHeaderContainer, TabContentContainer } from "components/Common/Tab/Tab.styles";
 import { useState } from "react";
 import { AddTagModal } from "./AddTagModal";
-import { useTagGetQuery } from "api/enchanced/tag";
+import { useTagGetQuery, useTagMergeMutation } from "api/enchanced/tag";
 import { TagDrawer } from "./TagDrawer";
 import { TagPlainModel } from "domain/models";
 import { TagCard } from "./TagCard";
 import { useSelectedItems } from "customHooks/useSelectedItems";
 import { TagNewCard } from "components/Common/Tag/TagNewCard";
+import { TabHeader } from "components/Common/Tab/TabHeader";
+import { useQueryResult } from 'customHooks/useQueryResult'
 
 export const TagsPage = () => {
 
-    const [ selectedTags, setSelectedTags ] = useSelectedItems();
+    const [ isCreatingTag, setIsCreatingTag ] = useState(false);
+    const [ selectedTags, setSelectedTags, clearSelection ] = useSelectedItems();
     const [ selectedTag, setSelectedTag ] = useState<TagPlainModel | undefined>(undefined);
 
     const { data: availableTags, isFetching, isError, error } = useTagGetQuery();
 
-    const [ isCreatingTag, setIsCreatingTag ] = useState(false);
+    const [ mergeTagsQuery, mergeTagsResult ] = useTagMergeMutation();
+
+    useQueryResult(mergeTagsResult);
+
+    const mergeTags = () => {
+        const model = {
+            mergeTagsCommandModel: {
+                tagIds: selectedTags
+            }
+        }
+
+        mergeTagsQuery(model);
+    }
 
     return (
         <Tab isError={isError} isFetching={isFetching} error={error}>
-            <TabHeaderContainer>
-                <h1>
-                    Tags
-                </h1>
-            </TabHeaderContainer>
+            <TabHeader title="Tags">
+                <>
+                    {selectedTags.length > 1 &&
+                        <Button onClick={mergeTags}>
+                            Merge
+                        </Button>}
+                    {selectedTags.length > 0 &&
+                        <Button onClick={clearSelection}>
+                            Clear selection
+                        </Button>}
+                </>
+            </TabHeader>
             <TabContentContainer>
                 <Space wrap>
                     {availableTags?.map(tag =>

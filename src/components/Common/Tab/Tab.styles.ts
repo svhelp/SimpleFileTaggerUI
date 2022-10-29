@@ -9,6 +9,7 @@ export const TabContainer = styled.div`
 export const TabHeaderContainer = styled.div`
     position: sticky;
     top: 0;
+    margin-bottom: 16px;
 `
 
 export const TabContentContainer = styled.div`
