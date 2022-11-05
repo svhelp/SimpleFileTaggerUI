@@ -12,7 +12,7 @@ interface IQueryResult {
     error?: FetchBaseQueryError | SerializedError
 }
 
-export const useQueryResult = (queryResult: IQueryResult) => {
+export const useQueryResult = (queryResult: IQueryResult, successCallback?: () => void) => {
     useEffect(() => {
         if (!queryResult){
             return;
@@ -38,6 +38,10 @@ export const useQueryResult = (queryResult: IQueryResult) => {
                 message: `Success`,
                 placement: "bottomRight",
             });
+
+            if (!!successCallback) {
+                successCallback();
+            }
         }
 
         if (!queryResult.data.isSuccessful) {

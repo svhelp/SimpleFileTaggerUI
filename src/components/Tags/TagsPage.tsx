@@ -1,6 +1,6 @@
 import {  Button, Space } from "antd";
 import { Tab } from "components/Common/Tab/Tab";
-import { TabHeaderContainer, TabContentContainer } from "components/Common/Tab/Tab.styles";
+import { TabContentContainer } from "components/Common/Tab/Tab.styles";
 import { useState } from "react";
 import { AddTagModal } from "./AddTagModal";
 import { useTagGetQuery, useTagMergeMutation } from "api/enchanced/tag";
@@ -38,10 +38,10 @@ export const TagsPage = () => {
         <Tab isError={isError} isFetching={isFetching} error={error}>
             <TabHeader title="Tags">
                 <>
-                    {selectedTags.length > 1 &&
+                    {/* {selectedTags.length > 1 &&
                         <Button onClick={mergeTags}>
                             Merge
-                        </Button>}
+                        </Button>} */}
                     {selectedTags.length > 0 &&
                         <Button onClick={clearSelection}>
                             Clear selection

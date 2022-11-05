@@ -1,8 +1,9 @@
+import { FolderOpenOutlined } from '@ant-design/icons';
 import { Drawer, Button, Divider } from "antd";
 import { DrawerButtonContainer, DrawerContent } from "components/Common/Drawer.styles";
 import { TagsListContent } from "components/Common/Tag/TagsListContent";
 import { LocationModel, TagPlainModel } from "domain/models";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useQueryResult } from "customHooks/useQueryResult";
 import { useLocationRemoveMutation, useLocationSetTagsMutation } from "api/enchanced/location";
 import { useTagGetQuery } from "api/enchanced/tag";
@@ -33,6 +34,8 @@ export const LocationDrawer = (props: ILocationDrawerProps) => {
 
         setTags(availableTags?.filter(t => location?.tagIds.includes(t.id)) ?? []);
     }, [ location ]);
+    
+    const openDirectory = useCallback((path: string) => window.electron.shell.openLocation(path), []);
     
     const updateLocation = () => {
         const model = {
@@ -68,11 +71,16 @@ export const LocationDrawer = (props: ILocationDrawerProps) => {
                     </Button>
                 </DrawerButtonContainer>
                 <Divider />
-                <Button
-                    onClick={() => removeLocation({id: location?.id})}
-                    danger>
-                    Remove location
-                </Button>
+                <DrawerButtonContainer>
+                    <Button icon={<FolderOpenOutlined />} onClick={() => openDirectory(location?.path ?? "")} >
+                        Open location
+                    </Button>
+                    <Button
+                        onClick={() => removeLocation({id: location?.id})}
+                        danger>
+                        Remove location
+                    </Button>
+                </DrawerButtonContainer>
             </DrawerContent>
         </Drawer>
     );

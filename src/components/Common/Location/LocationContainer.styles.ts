@@ -26,6 +26,7 @@ export const LocationNameContainer = styled.div`
     align-items: center;
 
     width: 100%;
+    padding: 5px;
 
     cursor: pointer;
 

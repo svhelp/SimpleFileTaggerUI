@@ -8,17 +8,20 @@ import { useLocationRemoveMutation } from "api/enchanced/location";
 import { LocationDrawer } from "./LocationDrawer";
 import { LocationContainer } from "components/Common/Location/LocationContainer";
 import { Space } from "antd";
-import { useSelectedItems } from "customHooks/useSelectedItems";
 import { LocationNewCard } from "components/Common/Location/LocationNewCard";
+import { CheckboxChangeEvent } from "antd/lib/checkbox";
 
 interface ILocationContentProps {
     locations: LocationModel[];
+    selectedLocations: string[];
+    setSelectedLocations: (elementId: string, e: CheckboxChangeEvent) => void;
+    clearSelection: () => void;
 }
 
-export const LocationContent = ({ locations }: ILocationContentProps) => {
+export const LocationContent = ({ locations, selectedLocations, setSelectedLocations, clearSelection }: ILocationContentProps) => {
+
     const navigate = useNavigate();
 
-    const [ selectedLocations, setSelectedLocations ] = useSelectedItems();
     const [ isAddingLocation, setIsAddingLocation ] = useState(false);
     const [ selectedLocation, setSelectedLocation ] = useState<LocationModel | undefined>(undefined);
 
@@ -42,6 +45,7 @@ export const LocationContent = ({ locations }: ILocationContentProps) => {
             return;
         }
 
+        clearSelection();
         navigate(`${path.pathname}/${location.name}`);
     }, [navigate]);
 

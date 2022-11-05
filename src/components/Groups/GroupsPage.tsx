@@ -1,4 +1,4 @@
-import { Space } from "antd";
+import { Button, Space } from "antd";
 
 import { Tab } from "components/Common/Tab/Tab";
 import { TabContentContainer } from "components/Common/Tab/Tab.styles";
@@ -14,7 +14,7 @@ import { TabHeader } from "components/Common/Tab/TabHeader";
 
 export const GroupsPage = () => {
     
-    const [ selectedGroups, setSelectedGroups ] = useSelectedItems();
+    const [ selectedGroups, setSelectedGroups, clearSelection ] = useSelectedItems();
     const [ isCreatingGroup, setIsCreatingGroup ] = useState(false);
     const [ selectedGroup, setSelectedGroup ] = useState<TagGroupPlainModel | undefined>(undefined);
 
@@ -22,7 +22,14 @@ export const GroupsPage = () => {
     
     return (
         <Tab isError={isError} isFetching={isFetching} error={error}>
-            <TabHeader title="Groups"/>
+            <TabHeader title="Groups">
+                <>
+                    {selectedGroups.length > 0 &&
+                        <Button onClick={clearSelection}>
+                            Clear selection
+                        </Button>}
+                </>
+            </TabHeader>
             <TabContentContainer>
                 <Space wrap>
                     {tagGroups?.map(tagGroup =>
