@@ -13,6 +13,7 @@ import { UploadChangeParam, UploadFile } from 'antd/lib/upload';
 import { useTagRemoveMutation } from 'api/enchanced/tag';
 import { DrawerButtonContainer, DrawerContent } from 'components/Common/Drawer.styles';
 import { useTagGroupGetQuery } from 'api/enchanced/taggroup';
+import { useCallback } from 'react';
 
 interface IGroupDrawerProps {
     tag?: TagPlainModel;
@@ -28,7 +29,7 @@ export const TagDrawer = (props: IGroupDrawerProps) => {
     const [ removeThumbnail, removeThumbnailResult ] = useThumbnailRemoveMutation();
     const [ removeTag, removeTagResult ] = useTagRemoveMutation();
 
-    useQueryResult(removeTagResult, closeDrawer);
+    useQueryResult(removeTagResult);
     useQueryResult(removeThumbnailResult);
 
     const onThumbnailUploading = (info: UploadChangeParam<UploadFile<any>>) => {
@@ -52,6 +53,15 @@ export const TagDrawer = (props: IGroupDrawerProps) => {
             });
         }
     };
+
+    const onRemove = useCallback(() => {
+        if (!tag){
+            return;
+        }
+
+        closeDrawer();
+        removeTag({ id:  tag.id });
+    }, [ closeDrawer, removeTag, tag ]);
 
     return (
         <Drawer
@@ -107,7 +117,7 @@ export const TagDrawer = (props: IGroupDrawerProps) => {
                 <Divider />
 
                 <Button
-                    onClick={() => removeTag({id: tag?.id})}
+                    onClick={onRemove}
                     danger>
                     Remove tag
                 </Button>

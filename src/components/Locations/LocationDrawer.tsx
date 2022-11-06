@@ -24,7 +24,7 @@ export const LocationDrawer = (props: ILocationDrawerProps) => {
     const [ updateLocationQuery, updateLocationResult ] = useLocationSetTagsMutation();
     
     useQueryResult(updateLocationResult);
-    useQueryResult(removeLocationResult);
+    useQueryResult(removeLocationResult, closeDrawer);
 
     useEffect(() => {
         if (!location){
@@ -41,12 +41,21 @@ export const LocationDrawer = (props: ILocationDrawerProps) => {
         const model = {
             updateLocationCommandModel: {
                 path: location!.path,
-                tags: tags.map(t => t.id)
+                tags: tags.map(t => t.name)
             }
         }
 
         updateLocationQuery(model);
     }
+    
+    const onRemove = useCallback(() => {
+        if (!location){
+            return;
+        }
+
+        closeDrawer();
+        removeLocation({ id:  location.id });
+    }, [ closeDrawer, removeLocation, location ]);
 
     return (
         <Drawer
@@ -76,7 +85,7 @@ export const LocationDrawer = (props: ILocationDrawerProps) => {
                         Open location
                     </Button>
                     <Button
-                        onClick={() => removeLocation({id: location?.id})}
+                        onClick={onRemove}
                         danger>
                         Remove location
                     </Button>

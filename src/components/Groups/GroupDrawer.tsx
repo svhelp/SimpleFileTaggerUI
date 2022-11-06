@@ -1,7 +1,7 @@
 import { Drawer, Button, Divider } from "antd";
 import { TagsListContent } from "components/Common/Tag/TagsListContent";
 import { TagGroupPlainModel, TagPlainModel } from "domain/models";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useQueryResult } from "customHooks/useQueryResult";
 import { useTagGetQuery } from "api/enchanced/tag";
 import { useTagGroupRemoveMutation, useTagGroupUpdateMutation } from "api/enchanced/taggroup";
@@ -22,7 +22,7 @@ export const GroupDrawer = (props: IGroupDrawerProps) => {
     const [ updateTagGroupQuery, updateTagGroupQueryResult ] = useTagGroupUpdateMutation();
     const [ removeTagGroup, removeTagGroupResult ] = useTagGroupRemoveMutation();
     
-    useQueryResult(removeTagGroupResult);
+    useQueryResult(removeTagGroupResult, closeDrawer);
     useQueryResult(updateTagGroupQueryResult);
 
     useEffect(() => {
@@ -34,6 +34,14 @@ export const GroupDrawer = (props: IGroupDrawerProps) => {
         setTags((availableTags ?? []).filter(t => props.group?.tagIds.includes(t.id)));
     }, [ group, availableTags ]);
     
+    const onRemove = useCallback(() => {
+        if (!group){
+            return;
+        }
+
+        closeDrawer();
+        removeTagGroup({ id:  group.id });
+    }, [ closeDrawer, removeTagGroup, group ]);
 
     const updateTags = () => {
         const model = {
@@ -72,7 +80,7 @@ export const GroupDrawer = (props: IGroupDrawerProps) => {
                 </DrawerButtonContainer>
                 <Divider />
                 <Button
-                    onClick={() => removeTagGroup({id: group?.id})}
+                    onClick={onRemove}
                     danger>
                     Remove group
                 </Button>

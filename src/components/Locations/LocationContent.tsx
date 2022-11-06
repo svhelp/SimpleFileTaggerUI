@@ -1,5 +1,4 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import styled from "styled-components";
 import { useState, useCallback } from "react";
 import { CreateLocationModal } from "./CreateLocationModal";
 import { LocationModel } from "domain/models";
@@ -51,24 +50,18 @@ export const LocationContent = ({ locations, selectedLocations, setSelectedLocat
 
     return (
         <>
-            {location.children.length > 0 &&
-                <>
-                    <LocationSubheader>
-                        Locations
-                    </LocationSubheader>
-                    <Space direction="vertical" style={{ display: 'flex' }}>
-                        {location.children.map(l =>
-                            <LocationContainer
-                                key={l.path}
-                                title={l.name}
-                                isSelected={selectedLocations.includes(l.id)}
-                                onSelect={(e) => setSelectedLocations(l.id, e)}
-                                onEdit={() => setSelectedLocation(l)}
-                                onClick={() => onTabClick(l)}
-                                onRemove={() => removeLocation({id: l.id})} />)}
-                        <LocationNewCard onClick={() => setIsAddingLocation(true)} />
-                    </Space>
-                </>}
+            <Space direction="vertical" style={{ display: 'flex' }}>
+                {location.children.map(l =>
+                    <LocationContainer
+                        key={l.path}
+                        title={l.name}
+                        isSelected={selectedLocations.includes(l.id)}
+                        onSelect={(e) => setSelectedLocations(l.id, e)}
+                        onEdit={() => setSelectedLocation(l)}
+                        onClick={() => onTabClick(l)}
+                        onRemove={() => removeLocation({id: l.id})} />)}
+                <LocationNewCard onClick={() => setIsAddingLocation(true)} />
+            </Space>
 
             <LocationDrawer
                 location={selectedLocation}
@@ -94,10 +87,3 @@ const getTargetLocation = (pathSnippets: string[], location?: LocationModel): Lo
     const levelName = pathSnippets[0];
     return getTargetLocation(pathSnippets.slice(1), location.children.find(l => l.name === levelName));
 };
-
-const LocationSubheader = styled.h2`
-    position: sticky;
-    top: 0;
-    background: #f0f2f5;
-    z-index: 2;
-`
