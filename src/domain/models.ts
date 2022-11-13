@@ -27,6 +27,7 @@ export type ThumbnailPlainModel = ModelBase & {
 
   export type TagGroupPlainModel = SimpleModel & {
     tagIds: string[];
+    isRequired: boolean;
   };
   
   export type UpdateGroupTagsCommandResultModel = ModelBase & {
@@ -41,6 +42,7 @@ export type ThumbnailPlainModel = ModelBase & {
   export type UpdateGroupCommandModel = {
     id?: string;
     name: string;
+    isRequired: boolean;
     tagIds: string[];
   };
 
