@@ -1,13 +1,14 @@
 import { enhancedApi as api } from '../partial/settings';
 
 const enhancedApi = api.enhanceEndpoints({
+  addTagTypes: ['Groups', 'Locations', 'Tags'],
   endpoints: {
-    importDirectoryGet: {
-        // invalidatesTags: ['Groups']
+    importDirectoryPatch: {
+        invalidatesTags: ['Groups', 'Locations', 'Tags']
     },
   },
 })
 
 export const {
-  useImportDirectoryGetQuery,
+  useImportDirectoryPatchMutation,
 } = enhancedApi;

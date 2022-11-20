@@ -3,9 +3,10 @@ import { emptySplitApi as api } from '../emptyApi';
 
 const injectedRtkApi = api.injectEndpoints({
   endpoints: (build) => ({
-    importDirectoryGet: build.query<ImportDirectoryApiResponse, ImportDirectoryApiArg>({
+    importDirectoryPatch: build.mutation<ImportDirectoryApiResponse, ImportDirectoryApiArg>({
       query: (queryArg) => ({
         url: `/api/Settings/ImportDirectory`,
+        method: 'PATCH',
         params: { path: queryArg.path },
       }),
     }),

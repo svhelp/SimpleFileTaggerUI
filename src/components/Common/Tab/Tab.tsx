@@ -6,8 +6,8 @@ import { getErrorMessage } from "utils/getErrorMessage";
 import { TabContainer } from "./Tab.styles";
 
 interface ITabProps {
-    isFetching: boolean;
-    isError: boolean;
+    isFetching?: boolean;
+    isError?: boolean;
     error?: FetchBaseQueryError | SerializedError;
     children: React.ReactNode;
 }
