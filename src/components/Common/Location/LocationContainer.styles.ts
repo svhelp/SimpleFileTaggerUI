@@ -34,6 +34,6 @@ export const LocationNameContainer = styled.div`
         overflow-wrap: anywhere;
         text-overflow: ellipsis;
         overflow: hidden;
-        margin: 0;
+        margin: 0 8px 0 0;
     }
 `

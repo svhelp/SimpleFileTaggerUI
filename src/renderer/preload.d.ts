@@ -13,7 +13,7 @@ declare global {
         selectFolder(): Promise<string | null>;
       };
       shell: {
-        openLocation(path: string): void;
+        openLocation(path: string): Promise<string>;
       }
     };
   }

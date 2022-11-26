@@ -2,6 +2,7 @@ import { Button, Checkbox, Popconfirm } from "antd"
 import {
     EditOutlined,
     DeleteOutlined,
+    WarningOutlined,
   } from '@ant-design/icons';
 import { LocationCardContainer, LocationNameContainer, LocationToolbar } from "./LocationContainer.styles";
 import { CheckboxChangeEvent } from "antd/lib/checkbox";
@@ -9,6 +10,7 @@ import { CheckboxChangeEvent } from "antd/lib/checkbox";
 interface ILocationContainerProps {
     title: string;
     isSelected?: boolean;
+    notFound?: boolean;
     onSelect?: (e: CheckboxChangeEvent) => void;
     onClick?: () => void;
     onEdit?: () => void;
@@ -25,6 +27,8 @@ export const LocationContainer = (props: ILocationContainerProps) => {
                 <p>
                     {props.title}
                 </p>
+
+                {props.notFound && <WarningOutlined style={{color: "#a00"}} />}
             </LocationNameContainer>
 
             <LocationToolbar>

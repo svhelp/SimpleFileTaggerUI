@@ -35,6 +35,7 @@ export const LocationContent = ({ locations, selectedLocations, setSelectedLocat
         id: '',
         path: '',
         name: '',
+        notFound: false,
         children: locations || [],
         tagIds: [],
     });
@@ -55,6 +56,7 @@ export const LocationContent = ({ locations, selectedLocations, setSelectedLocat
                     <LocationContainer
                         key={l.path}
                         title={l.name}
+                        notFound={l.notFound}
                         isSelected={selectedLocations.includes(l.id)}
                         onSelect={(e) => setSelectedLocations(l.id, e)}
                         onEdit={() => setSelectedLocation(l)}

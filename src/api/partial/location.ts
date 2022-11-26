@@ -62,6 +62,16 @@ const injectedRtkApi = api.injectEndpoints({
         params: { id: queryArg.id },
       }),
     }),
+    markNotFound: build.mutation<
+    MarkNotFoundApiResponse,
+      MarkNotFoundApiArg
+    >({
+      query: (queryArg) => ({
+        url: `/api/Location/MarkNotFound`,
+        method: 'PATCH',
+        params: { locationIds: queryArg.locationIds },
+      }),
+    })
   }),
   overrideExisting: false,
 });
@@ -96,4 +106,8 @@ export type LocationRemoveTagsApiArg = {
 export type LocationRemoveApiResponse = /** status 200  */ CommandResult;
 export type LocationRemoveApiArg = {
   id?: string;
+};
+export type MarkNotFoundApiResponse = /** status 200  */ CommandResult;
+export type MarkNotFoundApiArg = {
+  locationIds?: string[];
 };

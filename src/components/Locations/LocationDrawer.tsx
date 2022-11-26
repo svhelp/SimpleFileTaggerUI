@@ -5,7 +5,7 @@ import { TagsListContent } from "components/Common/Tag/TagsListContent";
 import { LocationModel, TagPlainModel } from "domain/models";
 import { useState, useEffect, useCallback } from "react";
 import { useQueryResult } from "customHooks/useQueryResult";
-import { useLocationRemoveMutation, useLocationSetTagsMutation } from "api/enchanced/location";
+import { useLocationRemoveMutation, useLocationSetTagsMutation, useMarkNotFoundMutation } from "api/enchanced/location";
 import { useTagGetQuery } from "api/enchanced/tag";
 
 interface ILocationDrawerProps {
@@ -22,9 +22,11 @@ export const LocationDrawer = (props: ILocationDrawerProps) => {
 
     const [ removeLocation, removeLocationResult ] = useLocationRemoveMutation();
     const [ updateLocationQuery, updateLocationResult ] = useLocationSetTagsMutation();
+    const [ markNotFoundQuery, markNotFoundResult ] = useMarkNotFoundMutation();
     
     useQueryResult(updateLocationResult);
     useQueryResult(removeLocationResult, closeDrawer);
+    useQueryResult(markNotFoundResult);
 
     useEffect(() => {
         if (!location){
@@ -35,7 +37,14 @@ export const LocationDrawer = (props: ILocationDrawerProps) => {
         setTags(availableTags?.filter(t => location?.tagIds.includes(t.id)) ?? []);
     }, [ location ]);
     
-    const openDirectory = useCallback((path: string) => window.electron.shell.openLocation(path), []);
+    const openDirectory = useCallback(async (location: LocationModel) => {
+        const locationOpenedError = await window.electron.shell.openLocation(location.path);
+
+        if (!!locationOpenedError){
+            const locationIdsToMarkNotFound = getLocationIds(location);
+            markNotFoundQuery({locationIds: locationIdsToMarkNotFound});
+        }
+    }, []);
     
     const updateLocation = () => {
         const model = {
@@ -81,7 +90,7 @@ export const LocationDrawer = (props: ILocationDrawerProps) => {
                 </DrawerButtonContainer>
                 <Divider />
                 <DrawerButtonContainer>
-                    <Button icon={<FolderOpenOutlined />} onClick={() => openDirectory(location?.path ?? "")} >
+                    <Button icon={<FolderOpenOutlined />} onClick={() => openDirectory(location!)} >
                         Open location
                     </Button>
                     <Button
@@ -93,4 +102,15 @@ export const LocationDrawer = (props: ILocationDrawerProps) => {
             </DrawerContent>
         </Drawer>
     );
+}
+
+const getLocationIds = (location: LocationModel) => {
+    if (!location.children || location.children.length === 0){
+        return [ location.id ];
+    }
+
+    const childrenData: string[] =
+        location.children.reduce((acc, l) => acc.concat(getLocationIds(l)), [] as string[])
+
+    return childrenData.concat([ location.id ]);
 }

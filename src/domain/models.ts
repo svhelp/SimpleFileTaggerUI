@@ -8,6 +8,7 @@ export type ModelBase = {
 
   export type LocationModel = SimpleModel & {
     path: string;
+    notFound: boolean;
     children: LocationModel[];
     tagIds: string[];
   };
@@ -66,6 +67,7 @@ export type ThumbnailPlainModel = ModelBase & {
   
   export type LocationPlainModel = SimpleModel & {
     path: string;
+    notFound: boolean;
     tagIds: string[];
   };
   

@@ -1,7 +1,22 @@
 import { AnyAction, ThunkDispatch } from '@reduxjs/toolkit';
-import { CommandResultWithOfUpdateLocationCommandResultModel } from 'domain/models';
+import { CommandResultWithOfUpdateLocationCommandResultModel, LocationModel } from 'domain/models';
 import { enhancedApi as api } from '../partial/location';
 import { enhancedApi as tagsApi } from '../partial/tag';
+
+const getUpdatedLocationIds = (location: LocationModel, ids: string[]) => {
+  const currentLocationsResult = ids.includes(location.id)
+    ? [ location ]
+    : [];
+
+    if (!location.children || location.children.length === 0){
+        return currentLocationsResult;
+    }
+
+    const childrenData: LocationModel[] =
+        location.children.reduce((acc, l) => acc.concat(getUpdatedLocationIds(l, ids)), [] as LocationModel[])
+
+    return childrenData.concat(currentLocationsResult);
+}
 
 const updateLocationsCache = (
     dispatch: ThunkDispatch<any, any, AnyAction>,
@@ -62,6 +77,7 @@ const enhancedApi = api.enhanceEndpoints({
                     id: response.data!.id,
                     name: response.data!.name,
                     path: response.data!.path,
+                    notFound: false,
                     children: [],
                     tagIds: [],
                   });
@@ -124,6 +140,34 @@ const enhancedApi = api.enhanceEndpoints({
             } catch {}
           }
     },
+    markNotFound: {
+      async onQueryStarted({ locationIds }, { dispatch, queryFulfilled }) {
+          try {
+            const { data: response } = await queryFulfilled
+  
+            if (!response.isSuccessful){
+              return;
+            }
+  
+            dispatch(
+              api.util.updateQueryData('locationAll', undefined, (draft) => {
+                const updatedLocations = getUpdatedLocationIds({
+                  id: '',
+                  notFound: false,
+                  path: '',
+                  name: '',
+                  tagIds: [],
+                  children: draft
+                }, locationIds ?? []);
+
+                for (const location of updatedLocations){
+                  location.notFound = true;
+                }
+              })
+            )
+          } catch {}
+        }
+    }
   },
 })
 
@@ -135,5 +179,6 @@ export const {
     useLocationSetTagsMutation,
     useLocationRemoveTagsMutation,
     useLocationRemoveMutation,
+    useMarkNotFoundMutation,
 } = enhancedApi;
 

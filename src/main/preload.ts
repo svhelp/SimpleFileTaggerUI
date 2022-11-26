@@ -21,7 +21,7 @@ contextBridge.exposeInMainWorld('electron', {
   },
   shell: {
     openLocation(path: string) {
-      shell.openPath(path);
+      return shell.openPath(path);
     }
   }
 });
