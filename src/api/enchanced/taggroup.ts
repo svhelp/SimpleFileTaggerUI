@@ -23,13 +23,14 @@ const enhancedApi = api.enhanceEndpoints({
                     draft.push({
                         id: response.data!.id,
                         name: updateGroupCommandModel.name,
+                        isRequired: updateGroupCommandModel.isRequired,
                         tagIds: response.data!.tags.map(t => t.id),
-                        isRequired: updateGroupCommandModel.isRequired
                       });
                     return;
                   }
 
                   updatedTag.name = updateGroupCommandModel.name;
+                  updatedTag.isRequired = updateGroupCommandModel.isRequired;
                   updatedTag.tagIds = response.data!.tags.map(t => t.id);
                 })
               )

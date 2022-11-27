@@ -1,10 +1,11 @@
-import { Divider, Input, Modal } from "antd";
+import { Checkbox, Divider, Input, Modal } from "antd";
 import { useTagGroupUpdateMutation } from "api/enchanced/taggroup";
 import { useState } from "react";
 import { useQueryResult } from "customHooks/useQueryResult";
 import { TagsListContent } from "components/Common/Tag/TagsListContent";
 import { useTagGetQuery } from "api/enchanced/tag";
 import { TagPlainModel } from "domain/models";
+import styled from "styled-components";
 
 interface ICreateTagGroupModalProps {
     isModalOpen: boolean;
@@ -13,6 +14,7 @@ interface ICreateTagGroupModalProps {
 
 export const CreateTagGroupModal = (props: ICreateTagGroupModalProps) => {
     const [ groupName, setGroupName ] = useState("");
+    const [ isRequired, setIsRequired ] = useState(false);
     const [ tags, setTags ] = useState<TagPlainModel[]>([]);
 
     const { data: availableTags, isFetching: isTagsFetching, isError: isTagsError, error: tagsError } = useTagGetQuery();
@@ -23,6 +25,7 @@ export const CreateTagGroupModal = (props: ICreateTagGroupModalProps) => {
 
     const closeModal = () => {
         setGroupName("");
+        setIsRequired(false);
         setTags([]);
 
         props.closeModal();
@@ -33,6 +36,7 @@ export const CreateTagGroupModal = (props: ICreateTagGroupModalProps) => {
             updateGroupCommandModel: {
                 id: undefined,
                 name: groupName,
+                isRequired: isRequired,
                 tagIds: tags.map(t => t.id)
             }
         }
@@ -48,6 +52,11 @@ export const CreateTagGroupModal = (props: ICreateTagGroupModalProps) => {
             onOk={createTagGroup}
             onCancel={closeModal}>
             <Input placeholder="Group name" value={groupName} onChange={(e) => setGroupName(e.target.value)} />
+            <DividedCheckbox
+                checked={isRequired}
+                onChange={e => setIsRequired(e.target.checked)}>
+                    Required
+            </DividedCheckbox>
             <Divider />
             <TagsListContent
                 tags={tags}
@@ -57,3 +66,7 @@ export const CreateTagGroupModal = (props: ICreateTagGroupModalProps) => {
         </Modal>
     )
 }
+
+const DividedCheckbox = styled(Checkbox)`
+    margin-top: 8px;
+`
