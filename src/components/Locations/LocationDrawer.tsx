@@ -1,6 +1,6 @@
 import { FolderOpenOutlined } from '@ant-design/icons';
 import { Drawer, Button, Divider } from "antd";
-import { DrawerButtonContainer, DrawerContent } from "components/Common/Drawer.styles";
+import { DrawerBody, DrawerButtonContainer, DrawerContent, DrawerFooter } from "components/Common/Drawer.styles";
 import { TagsListContent } from "components/Common/Tag/TagsListContent";
 import { LocationModel, TagPlainModel } from "domain/models";
 import { useState, useEffect, useCallback } from "react";
@@ -77,28 +77,33 @@ export const LocationDrawer = (props: ILocationDrawerProps) => {
             style={{ position: 'absolute' }}
         >
             <DrawerContent>
-                <TagsListContent
-                    tags={tags}
-                    availableTags={availableTags ?? []}
-                    updateTags={setTags}
-                />
-                <DrawerButtonContainer>
-                    <Button onClick={closeDrawer}>Cancel</Button>
-                    <Button type="primary" onClick={updateLocation}>
-                        Save
-                    </Button>
-                </DrawerButtonContainer>
-                <Divider />
-                <DrawerButtonContainer>
-                    <Button icon={<FolderOpenOutlined />} onClick={() => openDirectory(location!)} >
-                        Open location
-                    </Button>
-                    <Button
-                        onClick={onRemove}
-                        danger>
-                        Remove location
-                    </Button>
-                </DrawerButtonContainer>
+                <DrawerBody>
+                    <TagsListContent
+                        tags={tags}
+                        availableTags={availableTags ?? []}
+                        updateTags={setTags}
+                    />
+                    <DrawerButtonContainer>
+                        <Button onClick={closeDrawer}>Cancel</Button>
+                        <Button type="primary" onClick={updateLocation}>
+                            Save
+                        </Button>
+                    </DrawerButtonContainer>
+                </DrawerBody>
+                
+                <DrawerFooter>
+                    <Divider />
+                    <DrawerButtonContainer>
+                        <Button icon={<FolderOpenOutlined />} onClick={() => openDirectory(location!)} >
+                            Open location
+                        </Button>
+                        <Button
+                            onClick={onRemove}
+                            danger>
+                            Remove location
+                        </Button>
+                    </DrawerButtonContainer>
+                </DrawerFooter>
             </DrawerContent>
         </Drawer>
     );

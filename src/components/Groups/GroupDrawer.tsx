@@ -5,8 +5,9 @@ import { useState, useEffect, useCallback } from "react";
 import { useQueryResult } from "customHooks/useQueryResult";
 import { useTagGetQuery } from "api/enchanced/tag";
 import { useTagGroupRemoveMutation, useTagGroupUpdateMutation } from "api/enchanced/taggroup";
-import { DrawerButtonContainer, DrawerContent } from "components/Common/Drawer.styles";
+import { DrawerBody, DrawerButtonContainer, DrawerContent, DrawerFooter } from "components/Common/Drawer.styles";
 import styled from "styled-components";
+import { compareArrays } from "utils/compare";
 
 interface IGroupDrawerProps {
     group?: TagGroupPlainModel;
@@ -16,6 +17,7 @@ interface IGroupDrawerProps {
 export const GroupDrawer = (props: IGroupDrawerProps) => {
     const { group, closeDrawer } = props;
 
+    const [ name, setName ] = useState("");
     const [ isRequired, setIsRequired ] = useState(false);
     const [ tags, setTags ] = useState<TagPlainModel[]>([]);
 
@@ -29,11 +31,13 @@ export const GroupDrawer = (props: IGroupDrawerProps) => {
 
     useEffect(() => {
         if (!props.group){
+            setName("");
             setIsRequired(false);
             setTags([]);
             return;
         }
 
+        setName(props.group?.name);
         setIsRequired(props.group?.isRequired);
         setTags((availableTags ?? []).filter(t => props.group?.tagIds.includes(t.id)));
     }, [ group, availableTags ]);
@@ -61,6 +65,11 @@ export const GroupDrawer = (props: IGroupDrawerProps) => {
         closeDrawer();
     }
 
+    const hasChanges = !!group
+        && (isRequired !== group.isRequired
+        || name !== group.name
+        || !compareArrays(tags.map(t => t.id), group.tagIds));
+
     return (
         <Drawer
             title={group?.name}
@@ -72,28 +81,35 @@ export const GroupDrawer = (props: IGroupDrawerProps) => {
             style={{ position: 'absolute' }}
         >
             <DrawerContent>
-                <DividedCheckbox
-                    checked={isRequired}
-                    onChange={e => setIsRequired(e.target.checked)}>
-                        Required
-                </DividedCheckbox>
-                <TagsListContent
-                    tags={tags}
-                    availableTags={availableTags ?? []}
-                    updateTags={setTags}
-                />
-                <DrawerButtonContainer>
-                    <Button onClick={closeDrawer}>Cancel</Button>
-                    <Button type="primary" onClick={onUpdate}>
-                        Save
+                <DrawerBody>
+                    <DividedCheckbox
+                        checked={isRequired}
+                        onChange={e => setIsRequired(e.target.checked)}>
+                            Required
+                    </DividedCheckbox>
+                    <TagsListContent
+                        tags={tags}
+                        availableTags={availableTags ?? []}
+                        updateTags={setTags}
+                    />
+
+                    {hasChanges &&
+                        <DrawerButtonContainer>
+                            <Button onClick={closeDrawer}>Cancel</Button>
+                            <Button type="primary" onClick={onUpdate}>
+                                Save
+                            </Button>
+                        </DrawerButtonContainer>}
+                </DrawerBody>
+
+                <DrawerFooter>
+                    <Divider />
+                    <Button
+                        onClick={onRemove}
+                        danger>
+                        Remove group
                     </Button>
-                </DrawerButtonContainer>
-                <Divider />
-                <Button
-                    onClick={onRemove}
-                    danger>
-                    Remove group
-                </Button>
+                </DrawerFooter>
             </DrawerContent>
         </Drawer>
     );

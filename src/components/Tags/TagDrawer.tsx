@@ -11,7 +11,7 @@ import { useQueryResult } from 'customHooks/useQueryResult'
 import { ErrorNotification } from "components/Common/ErrorNotification.styles";
 import { UploadChangeParam, UploadFile } from 'antd/lib/upload';
 import { useTagRemoveMutation } from 'api/enchanced/tag';
-import { DrawerButtonContainer, DrawerContent } from 'components/Common/Drawer.styles';
+import { DrawerBody, DrawerButtonContainer, DrawerContent, DrawerFooter } from 'components/Common/Drawer.styles';
 import { useTagGroupGetQuery } from 'api/enchanced/taggroup';
 import { useCallback } from 'react';
 
@@ -74,53 +74,56 @@ export const TagDrawer = (props: IGroupDrawerProps) => {
             style={{ position: 'absolute' }}
         >
             <DrawerContent>
-                <h1>
-                    Thumbnail
-                </h1>
+                <DrawerBody>
+                    <h1>
+                        Thumbnail
+                    </h1>
 
-                {!!thumbnail &&
-                    <img width="100%" src={`data:image/jpeg;base64,${thumbnail.image}`} />}
-
-                <DrawerButtonContainer>
-                    <ImgCrop rotate>
-                        <Upload
-                            name='file'
-                            action={`${BaseURL}/api/Thumbnail/Add?tagId=${tag?.id}`}
-                            showUploadList={false}
-                            onChange = {onThumbnailUploading}>
-                            <Button icon={<UploadOutlined />}>Upload</Button>
-                        </Upload>
-                    </ImgCrop>
                     {!!thumbnail &&
-                        <Button
-                            icon={<DeleteOutlined />}
-                            onClick={() => removeThumbnail({ id: tag?.id })}>
-                            Remove
-                        </Button>}
-                </DrawerButtonContainer>
+                        <img width="100%" src={`data:image/jpeg;base64,${thumbnail.image}`} />}
 
-                <h1>
-                    Group
-                </h1>
+                    <DrawerButtonContainer>
+                        <ImgCrop rotate>
+                            <Upload
+                                name='file'
+                                action={`${BaseURL}/api/Thumbnail/Add?tagId=${tag?.id}`}
+                                showUploadList={false}
+                                onChange = {onThumbnailUploading}>
+                                <Button icon={<UploadOutlined />}>Upload</Button>
+                            </Upload>
+                        </ImgCrop>
+                        {!!thumbnail &&
+                            <Button
+                                icon={<DeleteOutlined />}
+                                onClick={() => removeThumbnail({ id: tag?.id })}>
+                                Remove
+                            </Button>}
+                    </DrawerButtonContainer>
 
-                <Select
-                    style={{ width: "100%" }}
-                    allowClear
-                    disabled
-                    value={tag?.groupId}
-                    options={tagGroups?.map(gr => ({
-                        value: gr.id,
-                        label: gr.name
-                    }) ?? [])}
-                />
+                    <h1>
+                        Group
+                    </h1>
 
-                <Divider />
-
-                <Button
-                    onClick={onRemove}
-                    danger>
-                    Remove tag
-                </Button>
+                    <Select
+                        style={{ width: "100%" }}
+                        allowClear
+                        disabled
+                        value={tag?.groupId}
+                        options={tagGroups?.map(gr => ({
+                            value: gr.id,
+                            label: gr.name
+                        }) ?? [])}
+                    />
+                </DrawerBody>
+                
+                <DrawerFooter>
+                    <Divider />
+                    <Button
+                        onClick={onRemove}
+                        danger>
+                        Remove tag
+                    </Button>
+                </DrawerFooter>
             </DrawerContent>
         </Drawer>
     );
