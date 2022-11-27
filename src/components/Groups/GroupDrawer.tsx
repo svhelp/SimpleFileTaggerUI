@@ -8,6 +8,7 @@ import { useTagGroupRemoveMutation, useTagGroupUpdateMutation } from "api/enchan
 import { DrawerBody, DrawerButtonContainer, DrawerContent, DrawerFooter } from "components/Common/Drawer.styles";
 import styled from "styled-components";
 import { compareArrays } from "utils/compare";
+import { EditableInput } from "components/Common/Input/EditableInput";
 
 interface IGroupDrawerProps {
     group?: TagGroupPlainModel;
@@ -55,7 +56,7 @@ export const GroupDrawer = (props: IGroupDrawerProps) => {
         const model = {
             updateGroupCommandModel: {
                 id: group!.id,
-                name: group!.name,
+                name: name,
                 isRequired: isRequired,
                 tagIds: tags.map(t => t.id)
             }
@@ -72,7 +73,7 @@ export const GroupDrawer = (props: IGroupDrawerProps) => {
 
     return (
         <Drawer
-            title={group?.name}
+            title={<EditableInput initValue={name} updateValue={setName}/>}
             placement="right"
             onClose={closeDrawer}
             open={!!group}
