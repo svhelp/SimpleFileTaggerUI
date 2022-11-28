@@ -25,7 +25,7 @@ export const TagDrawer = (props: IGroupDrawerProps) => {
     const { tag, closeDrawer } = props;
 
     const [ name, setName ] = useState("");
-    const [ tagGroupId, setTagGroupId ] = useState("");
+    const [ tagGroupId, setTagGroupId ] = useState<string | undefined>(undefined);
 
     const { data: tagGroups } = useTagGroupGetQuery();
     const { data: thumbnail, refetch, isFetching, isError, error } = useThumbnailGetQuery({ id: tag?.id });
@@ -41,12 +41,12 @@ export const TagDrawer = (props: IGroupDrawerProps) => {
     useEffect(() => {
         if (!tag){
             setName("");
-            setTagGroupId("");
+            setTagGroupId(undefined);
             return;
         }
 
         setName(tag.name);
-        setTagGroupId(tagGroups?.find(gr => gr.tagIds.includes(tag.id))?.id ?? "");
+        setTagGroupId(tagGroups?.find(gr => gr.tagIds.includes(tag.id))?.id);
     }, [ tag, tagGroups ]);
 
     const onThumbnailUploading = (info: UploadChangeParam<UploadFile<any>>) => {
@@ -76,7 +76,7 @@ export const TagDrawer = (props: IGroupDrawerProps) => {
             updateTagCommandModel: {
                 id: tag!.id,
                 name: name,
-                groupId: !!tagGroupId ? tagGroupId : undefined
+                groupId: tagGroupId
             }
         }
 
@@ -93,13 +93,7 @@ export const TagDrawer = (props: IGroupDrawerProps) => {
         removeTag({ id:  tag.id });
     }, [ closeDrawer, removeTag, tag ]);
 
-    const tagGroup = !!tag && !!tagGroups
-        ? tagGroups.find(gr => gr.tagIds.includes(tag.id))
-        : undefined;
-
-    const hasChanges = !!tag
-        && (name !== tag.name
-        || tagGroupId !== tagGroup?.id);
+    const hasChanges = !!tag && (name !== tag.name);
 
     return (
         <Drawer
