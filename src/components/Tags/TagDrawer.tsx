@@ -10,10 +10,11 @@ import { BaseURL } from 'api/emptyApi';
 import { useQueryResult } from 'customHooks/useQueryResult'
 import { ErrorNotification } from "components/Common/ErrorNotification.styles";
 import { UploadChangeParam, UploadFile } from 'antd/lib/upload';
-import { useTagRemoveMutation } from 'api/enchanced/tag';
+import { useTagRemoveMutation, useTagUpdateMutation } from 'api/enchanced/tag';
 import { DrawerBody, DrawerButtonContainer, DrawerContent, DrawerFooter } from 'components/Common/Drawer.styles';
 import { useTagGroupGetQuery } from 'api/enchanced/taggroup';
-import { useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import { EditableInput } from 'components/Common/Input/EditableInput';
 
 interface IGroupDrawerProps {
     tag?: TagPlainModel;
@@ -23,14 +24,30 @@ interface IGroupDrawerProps {
 export const TagDrawer = (props: IGroupDrawerProps) => {
     const { tag, closeDrawer } = props;
 
+    const [ name, setName ] = useState("");
+    const [ tagGroupId, setTagGroupId ] = useState("");
+
     const { data: tagGroups } = useTagGroupGetQuery();
     const { data: thumbnail, refetch, isFetching, isError, error } = useThumbnailGetQuery({ id: tag?.id });
 
+    const [ updateTag, urdateTagResult ] = useTagUpdateMutation();
     const [ removeThumbnail, removeThumbnailResult ] = useThumbnailRemoveMutation();
     const [ removeTag, removeTagResult ] = useTagRemoveMutation();
 
+    useQueryResult(urdateTagResult);
     useQueryResult(removeTagResult);
     useQueryResult(removeThumbnailResult);
+    
+    useEffect(() => {
+        if (!tag){
+            setName("");
+            setTagGroupId("");
+            return;
+        }
+
+        setName(tag.name);
+        setTagGroupId(tagGroups?.find(gr => gr.tagIds.includes(tag.id))?.id ?? "");
+    }, [ tag, tagGroups ]);
 
     const onThumbnailUploading = (info: UploadChangeParam<UploadFile<any>>) => {
         if (info.file.status !== 'uploading') {
@@ -54,6 +71,19 @@ export const TagDrawer = (props: IGroupDrawerProps) => {
         }
     };
 
+    const onUpdate = useCallback(() => {
+        const model = {
+            updateTagCommandModel: {
+                id: tag!.id,
+                name: name,
+                groupId: !!tagGroupId ? tagGroupId : undefined
+            }
+        }
+
+        updateTag(model);
+        closeDrawer();
+    }, [ tag, name, tagGroupId, updateTag ]);
+
     const onRemove = useCallback(() => {
         if (!tag){
             return;
@@ -63,9 +93,17 @@ export const TagDrawer = (props: IGroupDrawerProps) => {
         removeTag({ id:  tag.id });
     }, [ closeDrawer, removeTag, tag ]);
 
+    const tagGroup = !!tag && !!tagGroups
+        ? tagGroups.find(gr => gr.tagIds.includes(tag.id))
+        : undefined;
+
+    const hasChanges = !!tag
+        && (name !== tag.name
+        || tagGroupId !== tagGroup?.id);
+
     return (
         <Drawer
-            title={tag?.name}
+            title={<EditableInput initValue={name} updateValue={setName}/>}
             placement="right"
             onClose={closeDrawer}
             open={!!tag}
@@ -108,12 +146,20 @@ export const TagDrawer = (props: IGroupDrawerProps) => {
                         style={{ width: "100%" }}
                         allowClear
                         disabled
-                        value={tag?.groupId}
+                        value={tagGroupId}
                         options={tagGroups?.map(gr => ({
                             value: gr.id,
                             label: gr.name
                         }) ?? [])}
                     />
+
+                    {hasChanges &&
+                        <DrawerButtonContainer>
+                            <Button onClick={closeDrawer}>Cancel</Button>
+                            <Button type="primary" onClick={onUpdate}>
+                                Save
+                            </Button>
+                        </DrawerButtonContainer>}
                 </DrawerBody>
                 
                 <DrawerFooter>

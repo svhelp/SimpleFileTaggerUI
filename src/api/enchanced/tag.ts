@@ -20,7 +20,6 @@ const enhancedApi = api.enhanceEndpoints({
                   draft.push({
                     id: response.data,
                     name: simpleNamedModel.name,
-                    groupId: '',
                     thumbnailId: ''
                   });
                 })
@@ -29,7 +28,7 @@ const enhancedApi = api.enhanceEndpoints({
           },
     },
     tagUpdate: {
-        async onQueryStarted({ name, id }, { dispatch, queryFulfilled }) {
+        async onQueryStarted({ updateTagCommandModel }, { dispatch, queryFulfilled }) {
             try {
               const { data: response } = await queryFulfilled
     
@@ -39,13 +38,13 @@ const enhancedApi = api.enhanceEndpoints({
     
               dispatch(
                 api.util.updateQueryData('tagGet', undefined, (draft) => {
-                  const updatedTag = draft.find(t => t.id === id);
+                  const updatedTag = draft.find(t => t.id === updateTagCommandModel.id);
 
                   if (!updatedTag){
                     return;
                   }
 
-                  updatedTag.name = name!;
+                  updatedTag.name = updateTagCommandModel.name;
                 })
               )
             } catch {}

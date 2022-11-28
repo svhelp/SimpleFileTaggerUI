@@ -53,8 +53,13 @@ export type ThumbnailPlainModel = ModelBase & {
   };
 
   export type TagPlainModel = SimpleModel & {
-    groupId: string;
     thumbnailId: string;
+  };
+
+  export type UpdateTagCommandModel = {
+    id: string;
+    name: string;
+    groupId?: string;
   };
   
   export type MergeTagsCommandModel = {

@@ -45,7 +45,6 @@ const updateTagsCache = (
                 draft.push({
                     id: tag.id,
                     name: tag.name,
-                    groupId: '',
                     thumbnailId: ''
                 });
             }

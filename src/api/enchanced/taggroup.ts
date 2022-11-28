@@ -17,21 +17,25 @@ const enhancedApi = api.enhanceEndpoints({
     
               dispatch(
                 api.util.updateQueryData('tagGroupGet', undefined, (draft) => {
-                  const updatedTag = draft.find(t => t.id === response.data!.id);
+                  for (const group of draft) {
+                    group.tagIds = group.tagIds.filter(id => !updateGroupCommandModel.tagIds.includes(id));
+                  }
 
-                  if (!updatedTag){
+                  const updatedGroup = draft.find(t => t.id === response.data!.id);
+
+                  if (!updatedGroup){
                     draft.push({
                         id: response.data!.id,
                         name: updateGroupCommandModel.name,
                         isRequired: updateGroupCommandModel.isRequired,
-                        tagIds: response.data!.tags.map(t => t.id),
+                        tagIds: updateGroupCommandModel.tagIds,
                       });
                     return;
                   }
 
-                  updatedTag.name = updateGroupCommandModel.name;
-                  updatedTag.isRequired = updateGroupCommandModel.isRequired;
-                  updatedTag.tagIds = response.data!.tags.map(t => t.id);
+                  updatedGroup.name = updateGroupCommandModel.name;
+                  updatedGroup.isRequired = updateGroupCommandModel.isRequired;
+                  updatedGroup.tagIds = updateGroupCommandModel.tagIds;
                 })
               )
             } catch {}
@@ -51,13 +55,11 @@ const enhancedApi = api.enhanceEndpoints({
     
               dispatch(
                 api.util.updateQueryData('tagGroupGet', undefined, (draft) => {
-                  const updatedTag = draft.find(t => t.id === updateTagGroupRelationCommandModel.groupId);
+                  const updatedGroup = draft.find(t => t.id === updateTagGroupRelationCommandModel.groupId);
 
-                  if (!updatedTag){
-                    return;
+                  if (!!updatedGroup){
+                    updatedGroup.tagIds = updatedGroup.tagIds.filter(id => id !== updateTagGroupRelationCommandModel.tagId);
                   }
-
-                  updatedTag.tagIds = updatedTag.tagIds.filter(id => id !== updateTagGroupRelationCommandModel.tagId);
                 })
               )
             } catch {}
@@ -74,13 +76,17 @@ const enhancedApi = api.enhanceEndpoints({
     
               dispatch(
                 api.util.updateQueryData('tagGroupGet', undefined, (draft) => {
-                  const updatedTag = draft.find(t => t.id === updateTagGroupRelationCommandModel.groupId);
+                  const groupToRemove = draft.find(gr => gr.tagIds.includes(updateTagGroupRelationCommandModel.tagId));
 
-                  if (!updatedTag){
-                    return;
+                  if (!!groupToRemove){
+                    groupToRemove.tagIds = groupToRemove.tagIds.filter(id => id !== updateTagGroupRelationCommandModel.tagId);
                   }
 
-                  updatedTag.tagIds.push(updateTagGroupRelationCommandModel.tagId);
+                  const updatedGroup = draft.find(t => t.id === updateTagGroupRelationCommandModel.groupId);
+
+                  if (!!updatedGroup){
+                    updatedGroup.tagIds.push(updateTagGroupRelationCommandModel.tagId);
+                  }
                 })
               )
             } catch {}

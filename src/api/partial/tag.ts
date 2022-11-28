@@ -1,4 +1,4 @@
-import { CommandResult, TagPlainModel, CommandResultWithOfGuid, SimpleNamedModel, MergeTagsCommandModel } from 'domain/models';
+import { CommandResult, TagPlainModel, CommandResultWithOfGuid, SimpleNamedModel, MergeTagsCommandModel, UpdateTagCommandModel } from 'domain/models';
 import { emptySplitApi as api } from '../emptyApi';
 
 const injectedRtkApi = api.injectEndpoints({
@@ -17,7 +17,7 @@ const injectedRtkApi = api.injectEndpoints({
       query: (queryArg) => ({
         url: `/api/Tag/Update`,
         method: 'PUT',
-        params: { Name: queryArg.name, Id: queryArg.id },
+        body: queryArg.updateTagCommandModel,
       }),
     }),
     tagRemove: build.mutation<TagRemoveApiResponse, TagRemoveApiArg>({
@@ -48,8 +48,7 @@ export type TagCreateApiArg = {
 };
 export type TagUpdateApiResponse = /** status 200  */ CommandResult;
 export type TagUpdateApiArg = {
-  name?: string;
-  id?: string;
+  updateTagCommandModel: UpdateTagCommandModel;
 };
 export type TagRemoveApiResponse = /** status 200  */ CommandResult;
 export type TagRemoveApiArg = {
