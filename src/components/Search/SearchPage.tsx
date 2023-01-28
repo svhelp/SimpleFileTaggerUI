@@ -5,6 +5,7 @@ import { useSearchGetQuery } from "api/partial/search";
 import { LocationContainer } from "components/Common/Location/LocationContainer";
 import { Tab } from "components/Common/Tab/Tab";
 import { TabHeaderContainer, TabContentContainer } from "components/Common/Tab/Tab.styles";
+import { useGetVirtualRemovable } from 'customHooks/useGetVirtualRemovable';
 import { useCallback, useState } from "react";
 import styled from 'styled-components';
 
@@ -13,7 +14,7 @@ export const SearchPage = () => {
     const [ searchQuery, setSearchQuery ] = useState<string[]>([]);
     const [ searchValue, setSearchValue ] = useState([] as string[]);
 
-    const { data: tags, isFetching: isTagsFetching, isError: isTagsError, error: tagsError } = useTagGetQuery();
+    const { data: tags, isFetching: isTagsFetching, isError: isTagsError, error: tagsError } = useGetVirtualRemovable(useTagGetQuery);
     const { data, isFetching, isError, error } = useSearchGetQuery({tags: searchValue});
 
     const onSearch = useCallback(() => {

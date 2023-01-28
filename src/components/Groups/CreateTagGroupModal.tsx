@@ -6,6 +6,7 @@ import { TagsListContent } from "components/Common/Tag/TagsListContent";
 import { useTagGetQuery } from "api/enchanced/tag";
 import { TagPlainModel } from "domain/models";
 import styled from "styled-components";
+import { useGetVirtualRemovable } from "customHooks/useGetVirtualRemovable";
 
 interface ICreateTagGroupModalProps {
     isModalOpen: boolean;
@@ -17,7 +18,7 @@ export const CreateTagGroupModal = (props: ICreateTagGroupModalProps) => {
     const [ isRequired, setIsRequired ] = useState(false);
     const [ tags, setTags ] = useState<TagPlainModel[]>([]);
 
-    const { data: availableTags, isFetching: isTagsFetching, isError: isTagsError, error: tagsError } = useTagGetQuery();
+    const { data: availableTags, isFetching: isTagsFetching, isError: isTagsError, error: tagsError } = useGetVirtualRemovable(useTagGetQuery);
 
     const [ updateTagGroupQuery, updateTagGroupQueryResult ] = useTagGroupUpdateMutation();
     

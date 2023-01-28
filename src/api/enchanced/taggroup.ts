@@ -42,7 +42,27 @@ const enhancedApi = api.enhanceEndpoints({
           }
     },
     tagGroupRemove: {
-        invalidatesTags: ['Groups']
+      async onQueryStarted({ id }, { dispatch, queryFulfilled }) {
+        try {
+          const { data: response } = await queryFulfilled
+
+          if (!response.isSuccessful){
+            return;
+          }
+
+          dispatch(
+            api.util.updateQueryData('tagGroupGet', undefined, (draft) => {
+              const updatedGroup = draft.find(gr => gr.id === id);
+
+              if (!updatedGroup){
+                return;
+              }
+
+              updatedGroup.isRemoved = true;
+            })
+          )
+        } catch {}
+      }
     },
     tagGroupRemoveTag: {
         async onQueryStarted({ updateTagGroupRelationCommandModel }, { dispatch, queryFulfilled }) {

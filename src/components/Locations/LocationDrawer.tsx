@@ -8,6 +8,7 @@ import { useQueryResult } from "customHooks/useQueryResult";
 import { useLocationRemoveMutation, useLocationSetTagsMutation } from "api/enchanced/location";
 import { useTagGetQuery } from "api/enchanced/tag";
 import { useOpenDirectory } from 'customHooks/useOpenDirectory';
+import { useGetVirtualRemovable } from 'customHooks/useGetVirtualRemovable';
 
 interface ILocationDrawerProps {
     location?: LocationModel;
@@ -19,7 +20,7 @@ export const LocationDrawer = (props: ILocationDrawerProps) => {
 
     const [ tags, setTags ] = useState<TagPlainModel[]>([]);
 
-    const { data: availableTags, isFetching: isTagsFetching, isError: isTagsError, error: tagsError } = useTagGetQuery();
+    const { data: availableTags, isFetching: isTagsFetching, isError: isTagsError, error: tagsError } = useGetVirtualRemovable(useTagGetQuery);
 
     const [ removeLocation, removeLocationResult ] = useLocationRemoveMutation();
     const [ updateLocationQuery, updateLocationResult ] = useLocationSetTagsMutation();
@@ -29,7 +30,6 @@ export const LocationDrawer = (props: ILocationDrawerProps) => {
 
     useEffect(() => {
         if (!location){
-            setTags([]);
             return;
         }
 
@@ -64,9 +64,7 @@ export const LocationDrawer = (props: ILocationDrawerProps) => {
             placement="right"
             onClose={closeDrawer}
             open={!!location}
-            getContainer={false}
             closable={false}
-            style={{ position: 'absolute' }}
         >
             <DrawerContent>
                 <DrawerBody>

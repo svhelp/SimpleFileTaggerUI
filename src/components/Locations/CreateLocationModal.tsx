@@ -6,6 +6,7 @@ import { TagPlainModel } from "domain/models";
 import { useTagGetQuery } from "api/enchanced/tag";
 import { TagsListContent } from "components/Common/Tag/TagsListContent";
 import { LocationInput } from 'components/Common/Input/LocationInput';
+import { useGetVirtualRemovable } from "customHooks/useGetVirtualRemovable";
 
 interface IBindTagModalProps {
     isModalOpen: boolean;
@@ -16,7 +17,7 @@ export const CreateLocationModal = (props: IBindTagModalProps) => {
     const [ locationPath, setLocationPath ] = useState("");
     const [ tags, setTags ] = useState<TagPlainModel[]>([]);
 
-    const { data: availableTags, isFetching: isTagsFetching, isError: isTagsError, error: tagsError } = useTagGetQuery();
+    const { data: availableTags, isFetching: isTagsFetching, isError: isTagsError, error: tagsError } = useGetVirtualRemovable(useTagGetQuery);
     
     const [ createLocationQuery, createLocationQueryResult ] = useLocationAddTagsMutation();
     

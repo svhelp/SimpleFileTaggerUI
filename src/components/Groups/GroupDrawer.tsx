@@ -9,6 +9,7 @@ import { DrawerBody, DrawerButtonContainer, DrawerContent, DrawerFooter } from "
 import styled from "styled-components";
 import { compareArrays } from "utils/compare";
 import { EditableInput } from "components/Common/Input/EditableInput";
+import { useGetVirtualRemovable } from "customHooks/useGetVirtualRemovable";
 
 interface IGroupDrawerProps {
     group?: TagGroupPlainModel;
@@ -22,7 +23,7 @@ export const GroupDrawer = (props: IGroupDrawerProps) => {
     const [ isRequired, setIsRequired ] = useState(false);
     const [ tags, setTags ] = useState<TagPlainModel[]>([]);
 
-    const { data: availableTags, isFetching: isTagsFetching, isError: isTagsError, error: tagsError } = useTagGetQuery();
+    const { data: availableTags, isFetching: isTagsFetching, isError: isTagsError, error: tagsError } = useGetVirtualRemovable(useTagGetQuery);
 
     const [ updateTagGroupQuery, updateTagGroupQueryResult ] = useTagGroupUpdateMutation();
     const [ removeTagGroup, removeTagGroupResult ] = useTagGroupRemoveMutation();
@@ -32,14 +33,11 @@ export const GroupDrawer = (props: IGroupDrawerProps) => {
 
     useEffect(() => {
         if (!props.group){
-            setName("");
-            setIsRequired(false);
-            setTags([]);
             return;
         }
 
-        setName(props.group?.name);
-        setIsRequired(props.group?.isRequired);
+        setName(props.group.name);
+        setIsRequired(props.group.isRequired);
         setTags((availableTags ?? []).filter(t => props.group?.tagIds.includes(t.id)));
     }, [ group, availableTags ]);
     
@@ -77,9 +75,7 @@ export const GroupDrawer = (props: IGroupDrawerProps) => {
             placement="right"
             onClose={closeDrawer}
             open={!!group}
-            getContainer={false}
             closable={false}
-            style={{ position: 'absolute' }}
         >
             <DrawerContent>
                 <DrawerBody>

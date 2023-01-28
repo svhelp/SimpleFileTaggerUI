@@ -11,6 +11,7 @@ import { useTagGroupGetQuery } from "api/enchanced/taggroup";
 import { useSelectedItems } from "customHooks/useSelectedItems";
 import { TagNewCard } from "components/Common/Tag/TagNewCard";
 import { TabHeader } from "components/Common/Tab/TabHeader";
+import { useGetVirtualRemovable } from "customHooks/useGetVirtualRemovable";
 
 export const GroupsPage = () => {
     
@@ -18,7 +19,7 @@ export const GroupsPage = () => {
     const [ isCreatingGroup, setIsCreatingGroup ] = useState(false);
     const [ selectedGroup, setSelectedGroup ] = useState<TagGroupPlainModel | undefined>(undefined);
 
-    const { data: tagGroups, isFetching, isError, error } = useTagGroupGetQuery();
+    const { data: tagGroups, isFetching, isError, error } = useGetVirtualRemovable(useTagGroupGetQuery);
     
     return (
         <Tab isError={isError} isFetching={isFetching} error={error}>
@@ -32,7 +33,7 @@ export const GroupsPage = () => {
             </TabHeader>
             <TabContentContainer>
                 <Space wrap>
-                    {tagGroups?.map(tagGroup =>
+                    {tagGroups.map(tagGroup =>
                         <TagContainer
                             key={tagGroup.id}
                             title={tagGroup.name}

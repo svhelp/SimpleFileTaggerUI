@@ -11,6 +11,7 @@ import { useSelectedItems } from "customHooks/useSelectedItems";
 import { TagNewCard } from "components/Common/Tag/TagNewCard";
 import { TabHeader } from "components/Common/Tab/TabHeader";
 import { useQueryResult } from 'customHooks/useQueryResult'
+import { useGetVirtualRemovable } from "customHooks/useGetVirtualRemovable";
 
 export const TagsPage = () => {
 
@@ -18,7 +19,7 @@ export const TagsPage = () => {
     const [ selectedTags, setSelectedTags, clearSelection ] = useSelectedItems();
     const [ selectedTag, setSelectedTag ] = useState<TagPlainModel | undefined>(undefined);
 
-    const { data: availableTags, isFetching, isError, error } = useTagGetQuery();
+    const { data: availableTags, isFetching, isError, error } = useGetVirtualRemovable(useTagGetQuery);
 
     const [ mergeTagsQuery, mergeTagsResult ] = useTagMergeMutation();
 

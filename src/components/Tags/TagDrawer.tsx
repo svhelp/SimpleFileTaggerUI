@@ -15,6 +15,7 @@ import { DrawerBody, DrawerButtonContainer, DrawerContent, DrawerFooter } from '
 import { useTagGroupGetQuery } from 'api/enchanced/taggroup';
 import { useCallback, useEffect, useState } from 'react';
 import { EditableInput } from 'components/Common/Input/EditableInput';
+import { useGetVirtualRemovable } from 'customHooks/useGetVirtualRemovable';
 
 interface IGroupDrawerProps {
     tag?: TagPlainModel;
@@ -27,7 +28,7 @@ export const TagDrawer = (props: IGroupDrawerProps) => {
     const [ name, setName ] = useState("");
     const [ tagGroupId, setTagGroupId ] = useState<string | undefined>(undefined);
 
-    const { data: tagGroups } = useTagGroupGetQuery();
+    const { data: tagGroups } = useGetVirtualRemovable(useTagGroupGetQuery);
     const { data: thumbnail, refetch, isFetching, isError, error } = useThumbnailGetQuery({ id: tag?.id });
 
     const [ updateTag, urdateTagResult ] = useTagUpdateMutation();
@@ -40,8 +41,6 @@ export const TagDrawer = (props: IGroupDrawerProps) => {
     
     useEffect(() => {
         if (!tag){
-            setName("");
-            setTagGroupId(undefined);
             return;
         }
 
@@ -102,8 +101,6 @@ export const TagDrawer = (props: IGroupDrawerProps) => {
             onClose={closeDrawer}
             open={!!tag}
             closable={false}
-            getContainer={false}
-            style={{ position: 'absolute' }}
         >
             <DrawerContent>
                 <DrawerBody>

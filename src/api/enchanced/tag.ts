@@ -51,7 +51,27 @@ const enhancedApi = api.enhanceEndpoints({
           }
     },
     tagRemove: {
-        invalidatesTags: ['Tags']
+      async onQueryStarted({ id }, { dispatch, queryFulfilled }) {
+        try {
+          const { data: response } = await queryFulfilled
+
+          if (!response.isSuccessful){
+            return;
+          }
+
+          dispatch(
+            api.util.updateQueryData('tagGet', undefined, (draft) => {
+              const updatedTag = draft.find(t => t.id === id);
+
+              if (!updatedTag){
+                return;
+              }
+
+              updatedTag.isRemoved = true;
+            })
+          )
+        } catch {}
+      }
     },
     tagMerge: {
       invalidatesTags: ['Tags']

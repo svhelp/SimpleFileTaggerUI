@@ -1,9 +1,13 @@
-export type ModelBase = {
+  export type ModelBase = {
     id: string;
   };
 
   export type SimpleModel = ModelBase & {
     name: string;
+  };
+
+  export type VirtualRemovableModel = {
+    isRemoved?: boolean;
   };
 
   export type LocationModel = SimpleModel & {
@@ -22,11 +26,11 @@ export type ModelBase = {
     name: string;
   };
   
-export type ThumbnailPlainModel = ModelBase & {
+  export type ThumbnailPlainModel = ModelBase & {
     image: string;
   };
 
-  export type TagGroupPlainModel = SimpleModel & {
+  export type TagGroupPlainModel = SimpleModel & VirtualRemovableModel & {
     tagIds: string[];
     isRequired: boolean;
   };
@@ -52,7 +56,7 @@ export type ThumbnailPlainModel = ModelBase & {
     tagId: string;
   };
 
-  export type TagPlainModel = SimpleModel & {
+  export type TagPlainModel = SimpleModel & VirtualRemovableModel & {
     thumbnailId: string;
   };
 
@@ -70,7 +74,7 @@ export type ThumbnailPlainModel = ModelBase & {
     data: string;
   };
   
-  export type LocationPlainModel = SimpleModel & {
+  export type LocationPlainModel = SimpleModel & VirtualRemovableModel & {
     path: string;
     notFound: boolean;
     tagIds: string[];
