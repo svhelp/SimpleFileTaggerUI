@@ -1,10 +1,11 @@
-import { Divider, Input, Modal } from "antd"
+import { Divider, Modal } from "antd"
 import { useState } from "react"
 import { useQueryResult } from "customHooks/useQueryResult";
 import { useLocationAddTagsMutation } from "api/enchanced/location";
 import { TagPlainModel } from "domain/models";
 import { useTagGetQuery } from "api/enchanced/tag";
 import { TagsListContent } from "components/Common/Tag/TagsListContent";
+import { LocationInput } from 'components/Common/Input/LocationInput';
 
 interface IBindTagModalProps {
     isModalOpen: boolean;
@@ -46,13 +47,13 @@ export const CreateLocationModal = (props: IBindTagModalProps) => {
             open={props.isModalOpen}
             onOk={createLocation}
             onCancel={closeModal}>
-            <Input placeholder="Path" value={locationPath} onChange={(e) => setLocationPath(e.target.value)} />
-            <Divider />
-            <TagsListContent
-                tags={tags}
-                availableTags={availableTags ?? []}
-                updateTags={setTags}
-            />
+                <LocationInput path={locationPath} setPath={setLocationPath} />
+                <Divider />
+                <TagsListContent
+                    tags={tags}
+                    availableTags={availableTags ?? []}
+                    updateTags={setTags}
+                />
         </Modal>
     )
 }
