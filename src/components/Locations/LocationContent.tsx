@@ -9,6 +9,7 @@ import { LocationContainer } from "components/Common/Location/LocationContainer"
 import { Space } from "antd";
 import { LocationNewCard } from "components/Common/Location/LocationNewCard";
 import { CheckboxChangeEvent } from "antd/lib/checkbox";
+import { useOpenDirectory } from "customHooks/useOpenDirectory";
 
 interface ILocationContentProps {
     locations: LocationModel[];
@@ -39,6 +40,8 @@ export const LocationContent = ({ locations, selectedLocations, setSelectedLocat
         children: locations || [],
         tagIds: [],
     });
+    
+    const openDirectory = useOpenDirectory();
 
     const onTabClick = useCallback((location: LocationModel) => {
         if (location.children.length === 0){
@@ -59,8 +62,10 @@ export const LocationContent = ({ locations, selectedLocations, setSelectedLocat
                         notFound={l.notFound}
                         isSelected={selectedLocations.includes(l.id)}
                         onSelect={(e) => setSelectedLocations(l.id, e)}
+                        onClick={() => setSelectedLocation(l)}
+                        onDoubleClick={() => onTabClick(l)}
+                        onOpen={() => openDirectory(l)}
                         onEdit={() => setSelectedLocation(l)}
-                        onClick={() => onTabClick(l)}
                         onRemove={() => removeLocation({id: l.id})} />)}
                 <LocationNewCard onClick={() => setIsAddingLocation(true)} />
             </Space>
