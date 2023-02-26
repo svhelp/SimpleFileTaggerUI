@@ -1,23 +1,24 @@
 import {  Button, PageHeader } from "antd";
-import { useLocation, useNavigate } from "react-router-dom";
 import { TabHeaderContainer } from "components/Common/Tab/Tab.styles";
 import { LocationsBreadCrumb } from "./LocationsBreadCrumb";
+import { LocationPlainModel } from "domain/models";
 
 interface ILocationHeaderProps {
+    currentLocation: LocationPlainModel | undefined;
+    locations: LocationPlainModel[];
     selectedLocations: string[];
     clearSelection: () => void;
+    goToPreviousLocation: (locations: LocationPlainModel[]) => void;
 }
 
-export const LocationsHeader = ({ selectedLocations, clearSelection }: ILocationHeaderProps) => {
-    const navigate = useNavigate();
-    const location = useLocation();
+export const LocationsHeader = (props: ILocationHeaderProps) => {
+    const { currentLocation, locations, selectedLocations, clearSelection, goToPreviousLocation } = props;
+    
+    const canGoBack = !!currentLocation;
 
-    const lastLevelName = location.pathname.split('/').filter(i => i).pop()
-    const canGoBack = lastLevelName !== "locations";
-
-    const goBack = () => {
+    const onBackClicked = () => {
         clearSelection();
-        navigate(-1);
+        goToPreviousLocation(locations);
     }
 
     return (
@@ -26,7 +27,7 @@ export const LocationsHeader = ({ selectedLocations, clearSelection }: ILocation
                 className="site-page-header"
                 ghost={false}
                 title="Locations"
-                onBack={canGoBack ? () => goBack() : undefined}
+                onBack={canGoBack ? () => onBackClicked() : undefined}
                 breadcrumbRender={() => <LocationsBreadCrumb />}
                 extra={
                     <>

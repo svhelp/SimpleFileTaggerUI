@@ -1,35 +1,22 @@
 import { AnyAction, ThunkDispatch } from '@reduxjs/toolkit';
-import { CommandResultWithOfUpdateLocationCommandResultModel, LocationModel } from 'domain/models';
+import { CommandResultWithOfUpdateLocationCommandResultModel } from 'domain/models';
 import { enhancedApi as api } from '../partial/location';
 import { enhancedApi as tagsApi } from '../partial/tag';
-
-const getUpdatedLocationIds = (location: LocationModel, ids: string[]) => {
-  const currentLocationsResult = ids.includes(location.id)
-    ? [ location ]
-    : [];
-
-    if (!location.children || location.children.length === 0){
-        return currentLocationsResult;
-    }
-
-    const childrenData: LocationModel[] =
-        location.children.reduce((acc, l) => acc.concat(getUpdatedLocationIds(l, ids)), [] as LocationModel[])
-
-    return childrenData.concat(currentLocationsResult);
-}
 
 const updateLocationsCache = (
     dispatch: ThunkDispatch<any, any, AnyAction>,
     response: CommandResultWithOfUpdateLocationCommandResultModel) => {
     dispatch(
         api.util.updateQueryData('locationAll', undefined, (draft) => {
-            const updatedLocation = draft.find(l => l.id === response.data!.id);
+            for (const affectedLocation of response.data!.locations) {
+              const cachedLocation = draft.find(l => l.id === affectedLocation.id);
 
-            if (!updatedLocation) {
-                return;
+              if (!cachedLocation) {
+                  return;
+              }
+  
+              cachedLocation.tagIds = affectedLocation.tagIds;
             }
-
-            updatedLocation.tagIds = response.data!.tags.map(t => t.id);
         })
     );
 }
@@ -39,14 +26,10 @@ const updateTagsCache = (
     response: CommandResultWithOfUpdateLocationCommandResultModel) => {
     dispatch(
         tagsApi.util.updateQueryData('tagGet', undefined, (draft) => {
-            const tagsToAdd = response.data!.tags.filter(t => !draft.some(existingTag => existingTag.id === t.id));
+            const tagsToAdd = response.data!.createdTags ?? [];
 
             for (const tag of tagsToAdd) {
-                draft.push({
-                    id: tag.id,
-                    name: tag.name,
-                    thumbnailId: ''
-                });
+                draft.push(tag);
             }
         })
     );
@@ -62,7 +45,7 @@ const enhancedApi = api.enhanceEndpoints({
       providesTags: [{type: 'Locations', id: 'List' }],
     },
     locationCreate: {
-        async onQueryStarted({ simpleNamedModel }, { dispatch, queryFulfilled }) {
+        async onQueryStarted({ createLocationCommandModel }, { dispatch, queryFulfilled }) {
             try {
               const { data: response } = await queryFulfilled
     
@@ -72,21 +55,34 @@ const enhancedApi = api.enhanceEndpoints({
     
               dispatch(
                 api.util.updateQueryData('locationAll', undefined, (draft) => {
-                  draft.push({
-                    id: response.data!.id,
-                    name: response.data!.name,
-                    path: response.data!.path,
-                    notFound: false,
-                    children: [],
-                    tagIds: [],
-                  });
+                  for (const location of response.data!.locations){
+                    draft.push(location);
+                  }
                 })
               )
             } catch {}
           },
     },
     locationRemove: {
-        invalidatesTags: ['Locations']
+      async onQueryStarted({ removeLocationCommandModel }, { dispatch, queryFulfilled }) {
+          try {
+            const { data: response } = await queryFulfilled
+  
+            if (!response.isSuccessful){
+              return;
+            }
+  
+            dispatch(
+              api.util.updateQueryData('locationAll', undefined, (draft) => {
+                const removedLocations = draft.filter(l => response.data.includes(l.id))
+  
+                for (const removedLocation of removedLocations){
+                  removedLocation.isRemoved = true;
+                }
+              })
+            )
+          } catch {}
+        },
     },
     locationAddTags: {
         async onQueryStarted({ updateLocationCommandModel }, { dispatch, queryFulfilled }) {
@@ -97,8 +93,8 @@ const enhancedApi = api.enhanceEndpoints({
                 return;
               }
     
-              updateLocationsCache(dispatch, response);
               updateTagsCache(dispatch, response);
+              updateLocationsCache(dispatch, response);
             } catch {}
           }
     },
@@ -111,8 +107,8 @@ const enhancedApi = api.enhanceEndpoints({
                 return;
               }
     
-              updateLocationsCache(dispatch, response);
               updateTagsCache(dispatch, response);
+              updateLocationsCache(dispatch, response);
             } catch {}
           }
     },
@@ -140,7 +136,7 @@ const enhancedApi = api.enhanceEndpoints({
           }
     },
     markNotFound: {
-      async onQueryStarted({ locationIds }, { dispatch, queryFulfilled }) {
+      async onQueryStarted({ locationId }, { dispatch, queryFulfilled }) {
           try {
             const { data: response } = await queryFulfilled
   
@@ -150,16 +146,9 @@ const enhancedApi = api.enhanceEndpoints({
   
             dispatch(
               api.util.updateQueryData('locationAll', undefined, (draft) => {
-                const updatedLocations = getUpdatedLocationIds({
-                  id: '',
-                  notFound: false,
-                  path: '',
-                  name: '',
-                  tagIds: [],
-                  children: draft
-                }, locationIds ?? []);
+                const affectedLocations = draft.filter(l => response.data.includes(l.id));
 
-                for (const location of updatedLocations){
+                for (const location of affectedLocations){
                   location.notFound = true;
                 }
               })

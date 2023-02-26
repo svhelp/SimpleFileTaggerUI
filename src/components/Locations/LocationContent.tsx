@@ -1,7 +1,6 @@
-import { useLocation, useNavigate } from "react-router-dom";
 import { useState, useCallback } from "react";
 import { CreateLocationModal } from "./CreateLocationModal";
-import { LocationModel } from "domain/models";
+import { LocationPlainModel } from "domain/models";
 import { useQueryResult } from "customHooks/useQueryResult";
 import { useLocationRemoveMutation } from "api/enchanced/location";
 import { LocationDrawer } from "./LocationDrawer";
@@ -12,50 +11,44 @@ import { CheckboxChangeEvent } from "antd/lib/checkbox";
 import { useOpenDirectory } from "customHooks/useOpenDirectory";
 
 interface ILocationContentProps {
-    locations: LocationModel[];
+    currentLocation: LocationPlainModel | undefined;
+    locations: LocationPlainModel[];
     selectedLocations: string[];
     setSelectedLocations: (elementId: string, e: CheckboxChangeEvent) => void;
     clearSelection: () => void;
+    goToLocation: (locations: LocationPlainModel) => void;
 }
 
-export const LocationContent = ({ locations, selectedLocations, setSelectedLocations, clearSelection }: ILocationContentProps) => {
+export const LocationContent = (props: ILocationContentProps) => {
+    const { currentLocation, locations, selectedLocations, setSelectedLocations, clearSelection, goToLocation } = props;
 
-    const navigate = useNavigate();
+    const openDirectory = useOpenDirectory();
 
     const [ isAddingLocation, setIsAddingLocation ] = useState(false);
-    const [ selectedLocation, setSelectedLocation ] = useState<LocationModel | undefined>(undefined);
+    const [ selectedLocation, setSelectedLocation ] = useState<LocationPlainModel | undefined>(undefined);
 
     const [ removeLocation, removeLocationResult ] = useLocationRemoveMutation();
     
     useQueryResult(removeLocationResult);
 
-    const path = useLocation();
-    const pathSnippets = path.pathname.split('/').filter(i => i).slice(1);
-
-    const location = getTargetLocation(pathSnippets, {
-        id: '',
-        path: '',
-        name: '',
-        notFound: false,
-        children: locations || [],
-        tagIds: [],
-    });
-    
-    const openDirectory = useOpenDirectory();
-
-    const onTabClick = useCallback((location: LocationModel) => {
-        if (location.children.length === 0){
+    const onTabClick = useCallback((location: LocationPlainModel) => {
+        const children = locations.filter(l => l.parentId === location.id);
+        if (children.length === 0){
             return;
         }
 
         clearSelection();
-        navigate(`${path.pathname}/${location.name}`);
-    }, [navigate]);
+        goToLocation(location);
+    }, [ locations, clearSelection, goToLocation ]);
+
+    const locationsToShow = !!currentLocation
+        ? locations.filter(l => l.parentId === currentLocation.id)
+        : locations.filter(l => !l.parentId);
 
     return (
         <>
             <Space direction="vertical" style={{ display: 'flex' }}>
-                {location.children.map(l =>
+                {locationsToShow.map(l =>
                     <LocationContainer
                         key={l.path}
                         title={l.name}
@@ -66,7 +59,7 @@ export const LocationContent = ({ locations, selectedLocations, setSelectedLocat
                         onDoubleClick={() => onTabClick(l)}
                         onOpen={() => openDirectory(l)}
                         onEdit={() => setSelectedLocation(l)}
-                        onRemove={() => removeLocation({id: l.id})} />)}
+                        onRemove={() => removeLocation({ removeLocationCommandModel: { locationId: l.id, isRecoursive: false } })} />)}
                 <LocationNewCard onClick={() => setIsAddingLocation(true)} />
             </Space>
 
@@ -80,17 +73,4 @@ export const LocationContent = ({ locations, selectedLocations, setSelectedLocat
                 closeModal={() => setIsAddingLocation(false)} />
         </>
     );
-};
-
-const getTargetLocation = (pathSnippets: string[], location?: LocationModel): LocationModel => {
-    if (!location) {
-        throw new Error("Location not found.");
-    }
-
-    if (pathSnippets.length === 0) {
-        return location;
-    }
-
-    const levelName = pathSnippets[0];
-    return getTargetLocation(pathSnippets.slice(1), location.children.find(l => l.name === levelName));
 };

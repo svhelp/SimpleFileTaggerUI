@@ -2,7 +2,7 @@ import { FolderOpenOutlined } from '@ant-design/icons';
 import { Drawer, Button, Divider } from "antd";
 import { DrawerBody, DrawerButtonContainer, DrawerContent, DrawerFooter } from "components/Common/Drawer.styles";
 import { TagsListContent } from "components/Common/Tag/TagsListContent";
-import { LocationModel, TagPlainModel } from "domain/models";
+import { LocationPlainModel, TagPlainModel } from "domain/models";
 import { useState, useEffect, useCallback } from "react";
 import { useQueryResult } from "customHooks/useQueryResult";
 import { useLocationRemoveMutation, useLocationSetTagsMutation } from "api/enchanced/location";
@@ -11,13 +11,14 @@ import { useOpenDirectory } from 'customHooks/useOpenDirectory';
 import { useGetVirtualRemovable } from 'customHooks/useGetVirtualRemovable';
 
 interface ILocationDrawerProps {
-    location?: LocationModel;
+    location?: LocationPlainModel;
     closeDrawer: () => void;
 }
 
 export const LocationDrawer = (props: ILocationDrawerProps) => {
     const { location, closeDrawer } = props;
 
+    const [ name, setName ] = useState("");
     const [ tags, setTags ] = useState<TagPlainModel[]>([]);
 
     const { data: availableTags, isFetching: isTagsFetching, isError: isTagsError, error: tagsError } = useGetVirtualRemovable(useTagGetQuery);
@@ -33,7 +34,8 @@ export const LocationDrawer = (props: ILocationDrawerProps) => {
             return;
         }
 
-        setTags(availableTags?.filter(t => location?.tagIds.includes(t.id)) ?? []);
+        setName(location.name);
+        setTags(availableTags?.filter(t => location.tagIds.includes(t.id)) ?? []);
     }, [ location ]);
     
     const openDirectory = useOpenDirectory();
@@ -42,7 +44,8 @@ export const LocationDrawer = (props: ILocationDrawerProps) => {
         const model = {
             updateLocationCommandModel: {
                 path: location!.path,
-                tags: tags.map(t => t.name)
+                tags: tags.map(t => t.name),
+                isRecoursive: false,
             }
         }
 
@@ -55,12 +58,12 @@ export const LocationDrawer = (props: ILocationDrawerProps) => {
         }
 
         closeDrawer();
-        removeLocation({ id:  location.id });
+        removeLocation({ removeLocationCommandModel: { locationId: location.id, isRecoursive: false } });
     }, [ closeDrawer, removeLocation, location ]);
 
     return (
         <Drawer
-            title={location?.name}
+            title={name}
             placement="right"
             onClose={closeDrawer}
             open={!!location}

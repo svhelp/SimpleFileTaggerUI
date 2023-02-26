@@ -73,17 +73,31 @@
   export type CommandResultWithOfGuid = CommandResult & {
     data: string;
   };
+
+  export type CommandResultWithOfListGuid = CommandResult & {
+    data: string[];
+  };
   
   export type LocationPlainModel = SimpleModel & VirtualRemovableModel & {
     path: string;
+    parentId?: string;
     notFound: boolean;
     tagIds: string[];
   };
-  
-  export type UpdateLocationCommandResultModel = ModelBase & {
+
+  export type CreateLocationCommandModel = {
     path: string;
-    name: string;
-    tags: SimpleModel[];
+    isRecoursive: boolean;
+  }
+
+  export type RemoveLocationCommandModel = {
+    locationId: string;
+    isRecoursive: boolean;
+  }
+  
+  export type UpdateLocationCommandResultModel = {
+    locations: LocationPlainModel[];
+    createdTags: TagPlainModel[];
   };
 
   export type CommandResultWithOfUpdateLocationCommandResultModel =
@@ -93,5 +107,6 @@
 
   export type UpdateLocationCommandModel = {
     path: string;
+    isRecoursive: boolean;
     tags: string[];
   };

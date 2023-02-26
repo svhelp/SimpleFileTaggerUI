@@ -32,13 +32,13 @@ export const GroupDrawer = (props: IGroupDrawerProps) => {
     useQueryResult(updateTagGroupQueryResult);
 
     useEffect(() => {
-        if (!props.group){
+        if (!group){
             return;
         }
 
-        setName(props.group.name);
-        setIsRequired(props.group.isRequired);
-        setTags((availableTags ?? []).filter(t => props.group?.tagIds.includes(t.id)));
+        setName(group.name);
+        setIsRequired(group.isRequired);
+        setTags((availableTags ?? []).filter(t => group?.tagIds.includes(t.id)));
     }, [ group, availableTags ]);
     
     const onRemove = useCallback(() => {

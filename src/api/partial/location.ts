@@ -1,4 +1,4 @@
-import { CommandResult, CommandResultWithOfUpdateLocationCommandResultModel, LocationModel, SimpleNamedModel, UpdateLocationCommandModel } from 'domain/models';
+import { CommandResultWithOfListGuid, CommandResultWithOfUpdateLocationCommandResultModel, CreateLocationCommandModel, LocationModel, LocationPlainModel, RemoveLocationCommandModel, UpdateLocationCommandModel } from 'domain/models';
 import { emptySplitApi as api } from '../emptyApi';
 
 const injectedRtkApi = api.injectEndpoints({
@@ -19,7 +19,7 @@ const injectedRtkApi = api.injectEndpoints({
       query: (queryArg) => ({
         url: `/api/Location/Create`,
         method: 'POST',
-        body: queryArg.simpleNamedModel,
+        body: queryArg.createLocationCommandModel,
       }),
     }),
     locationAddTags: build.mutation<
@@ -59,17 +59,17 @@ const injectedRtkApi = api.injectEndpoints({
       query: (queryArg) => ({
         url: `/api/Location/Remove`,
         method: 'DELETE',
-        params: { id: queryArg.id },
+        body: queryArg.removeLocationCommandModel,
       }),
     }),
     markNotFound: build.mutation<
-    MarkNotFoundApiResponse,
+      MarkNotFoundApiResponse,
       MarkNotFoundApiArg
     >({
       query: (queryArg) => ({
         url: `/api/Location/MarkNotFound`,
         method: 'PATCH',
-        params: { locationIds: queryArg.locationIds },
+        params: { locationId: queryArg.locationId },
       }),
     })
   }),
@@ -82,12 +82,12 @@ export type LocationGetApiResponse = /** status 200  */ LocationModel;
 export type LocationGetApiArg = {
   path?: string;
 };
-export type LocationAllApiResponse = /** status 200  */ LocationModel[];
+export type LocationAllApiResponse = /** status 200  */ LocationPlainModel[];
 export type LocationAllApiArg = void;
 export type LocationCreateApiResponse =
   /** status 200  */ CommandResultWithOfUpdateLocationCommandResultModel;
 export type LocationCreateApiArg = {
-  simpleNamedModel: SimpleNamedModel;
+  createLocationCommandModel: CreateLocationCommandModel;
 };
 export type LocationAddTagsApiResponse =
   /** status 200  */ CommandResultWithOfUpdateLocationCommandResultModel;
@@ -99,15 +99,18 @@ export type LocationSetTagsApiResponse =
 export type LocationSetTagsApiArg = {
   updateLocationCommandModel: UpdateLocationCommandModel;
 };
-export type LocationRemoveTagsApiResponse = /** status 200  */ CommandResult;
+export type LocationRemoveTagsApiResponse =
+  /** status 200  */ CommandResultWithOfUpdateLocationCommandResultModel;
 export type LocationRemoveTagsApiArg = {
   updateLocationCommandModel: UpdateLocationCommandModel;
 };
-export type LocationRemoveApiResponse = /** status 200  */ CommandResult;
+export type LocationRemoveApiResponse =
+  /** status 200  */ CommandResultWithOfListGuid;
 export type LocationRemoveApiArg = {
-  id?: string;
+  removeLocationCommandModel: RemoveLocationCommandModel;
 };
-export type MarkNotFoundApiResponse = /** status 200  */ CommandResult;
+export type MarkNotFoundApiResponse =
+  /** status 200  */ CommandResultWithOfListGuid;
 export type MarkNotFoundApiArg = {
-  locationIds?: string[];
+  locationId: string;
 };
