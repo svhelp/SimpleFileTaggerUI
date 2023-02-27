@@ -9,6 +9,7 @@ import { useLocationRemoveMutation, useLocationSetTagsMutation } from "api/encha
 import { useTagGetQuery } from "api/enchanced/tag";
 import { useOpenDirectory } from 'customHooks/useOpenDirectory';
 import { useGetVirtualRemovable } from 'customHooks/useGetVirtualRemovable';
+import { compareArrays } from 'utils/compare';
 
 interface ILocationDrawerProps {
     location?: LocationPlainModel;
@@ -61,6 +62,9 @@ export const LocationDrawer = (props: ILocationDrawerProps) => {
         removeLocation({ removeLocationCommandModel: { locationId: location.id, isRecoursive: false } });
     }, [ closeDrawer, removeLocation, location ]);
 
+    const hasChanges = !!location &&
+        !compareArrays(tags.map(t => t.id), location.tagIds);
+
     return (
         <Drawer
             title={name}
@@ -76,12 +80,14 @@ export const LocationDrawer = (props: ILocationDrawerProps) => {
                         availableTags={availableTags ?? []}
                         updateTags={setTags}
                     />
-                    <DrawerButtonContainer>
-                        <Button onClick={closeDrawer}>Cancel</Button>
-                        <Button type="primary" onClick={updateLocation}>
-                            Save
-                        </Button>
-                    </DrawerButtonContainer>
+
+                    {hasChanges &&
+                        <DrawerButtonContainer>
+                            <Button onClick={closeDrawer}>Cancel</Button>
+                            <Button type="primary" onClick={updateLocation}>
+                                Save
+                            </Button>
+                        </DrawerButtonContainer>}
                 </DrawerBody>
                 
                 <DrawerFooter>

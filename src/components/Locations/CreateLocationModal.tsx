@@ -58,12 +58,12 @@ export const CreateLocationModal = (props: IBindTagModalProps) => {
                     onChange={e => setIsRecoursive(e.target.checked)}>
                         Add recoursively
                 </DividedCheckbox>
-                <Divider />
+                {/* <Divider />
                 <TagsListContent
                     tags={tags}
                     availableTags={availableTags ?? []}
                     updateTags={setTags}
-                />
+                /> */}
         </Modal>
     )
 }

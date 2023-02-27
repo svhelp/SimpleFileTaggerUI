@@ -1,4 +1,5 @@
 import { enhancedApi as api } from '../partial/tag';
+import { enhancedApi as locationsApi } from '../partial/location';
 
 const enhancedApi = api.enhanceEndpoints({
   addTagTypes: ['Tags'],
@@ -74,7 +75,40 @@ const enhancedApi = api.enhanceEndpoints({
       }
     },
     tagMerge: {
-      invalidatesTags: ['Tags']
+      async onQueryStarted({ mergeTagsCommandModel }, { dispatch, queryFulfilled }) {
+        try {
+          const { data: response } = await queryFulfilled
+
+          if (!response.isSuccessful){
+            return;
+          }
+
+          dispatch(
+            api.util.updateQueryData('tagGet', undefined, (draft) => {
+              const mergedTags = draft.filter(t => mergeTagsCommandModel.tagIds.includes(t.id)
+                && t.id !== mergeTagsCommandModel.mainTagId);
+
+              for (const mergedTag of mergedTags) {
+                mergedTag.isRemoved = true;
+              }
+            })
+          )
+          
+          dispatch(
+            locationsApi.util.updateQueryData('locationAll', undefined, (draft) => {
+              const updatedLocations = draft.filter(l => l.tagIds.filter(t => mergeTagsCommandModel.tagIds.includes(t)).length > 1);
+
+              for (const removedLocation of updatedLocations){
+                removedLocation.tagIds = removedLocation.tagIds.filter(t => !mergeTagsCommandModel.tagIds.includes(t));
+
+                if (!removedLocation.tagIds.includes(mergeTagsCommandModel.mainTagId)) {
+                  removedLocation.tagIds.push(mergeTagsCommandModel.mainTagId);
+                }
+              }
+            })
+          )
+        } catch {}
+      }
     },
   },
 })

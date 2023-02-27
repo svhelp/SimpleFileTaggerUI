@@ -67,6 +67,7 @@
   };
   
   export type MergeTagsCommandModel = {
+    mainTagId: string;
     tagIds: string[];
   };
 

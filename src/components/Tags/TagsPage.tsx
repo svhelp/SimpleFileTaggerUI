@@ -3,46 +3,38 @@ import { Tab } from "components/Common/Tab/Tab";
 import { TabContentContainer } from "components/Common/Tab/Tab.styles";
 import { useState } from "react";
 import { AddTagModal } from "./AddTagModal";
-import { useTagGetQuery, useTagMergeMutation } from "api/enchanced/tag";
+import { useTagGetQuery } from "api/enchanced/tag";
 import { TagDrawer } from "./TagDrawer";
 import { TagPlainModel } from "domain/models";
 import { TagCard } from "./TagCard";
 import { useSelectedItems } from "customHooks/useSelectedItems";
 import { TagNewCard } from "components/Common/Tag/TagNewCard";
 import { TabHeader } from "components/Common/Tab/TabHeader";
-import { useQueryResult } from 'customHooks/useQueryResult'
 import { useGetVirtualRemovable } from "customHooks/useGetVirtualRemovable";
+import { MergeTagsModal } from "./MergeTagsModal";
 
 export const TagsPage = () => {
 
     const [ isCreatingTag, setIsCreatingTag ] = useState(false);
+    const [ isMergingTags, setIsMergingTags ] = useState(false);
     const [ selectedTags, setSelectedTags, clearSelection ] = useSelectedItems();
     const [ selectedTag, setSelectedTag ] = useState<TagPlainModel | undefined>(undefined);
 
     const { data: availableTags, isFetching, isError, error } = useGetVirtualRemovable(useTagGetQuery);
 
-    const [ mergeTagsQuery, mergeTagsResult ] = useTagMergeMutation();
-
-    useQueryResult(mergeTagsResult);
-
-    const mergeTags = () => {
-        const model = {
-            mergeTagsCommandModel: {
-                tagIds: selectedTags
-            }
-        }
-
-        mergeTagsQuery(model);
+    const closeMergingDialog = () => {
+        setIsMergingTags(false);
+        clearSelection();
     }
 
     return (
         <Tab isError={isError} isFetching={isFetching} error={error}>
             <TabHeader title="Tags">
                 <>
-                    {/* {selectedTags.length > 1 &&
-                        <Button onClick={mergeTags}>
+                    {selectedTags.length > 1 &&
+                        <Button onClick={() => setIsMergingTags(true)}>
                             Merge
-                        </Button>} */}
+                        </Button>}
                     {selectedTags.length > 0 &&
                         <Button onClick={clearSelection}>
                             Clear selection
@@ -69,6 +61,11 @@ export const TagsPage = () => {
             <AddTagModal
                 isModalOpen={isCreatingTag}
                 closeModal={() => setIsCreatingTag(false)} />
+                
+            <MergeTagsModal
+                isModalOpen={isMergingTags}
+                selectedTagIds={selectedTags}
+                closeModal={closeMergingDialog} />
         </Tab>
     )
 }
