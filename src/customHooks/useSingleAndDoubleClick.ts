@@ -10,7 +10,10 @@ export const useSingleAndDoubleClick = (
 
         useEffect(() => {
             if (!actionDoubleClick){
-                actionSingleClick();
+                if (click === 1) {
+                    actionSingleClick();
+                }
+                
                 return;
             }
 
