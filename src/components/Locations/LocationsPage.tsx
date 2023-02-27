@@ -28,7 +28,8 @@ export const LocationsPage = () => {
                     selectedLocations={selectedLocations}
                     setSelectedLocations={setSelectedLocations}
                     clearSelection={clearSelection}
-                    goToLocation={goToLocation} />
+                    goToLocation={goToLocation}
+                    goToPreviousLocation={goToPreviousLocation} />
             </TabContentContainer>
         </Tab>
     )

@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { CreateLocationModal } from "./CreateLocationModal";
 import { LocationPlainModel } from "domain/models";
 import { useQueryResult } from "customHooks/useQueryResult";
@@ -17,10 +17,11 @@ interface ILocationContentProps {
     setSelectedLocations: (elementId: string, e: CheckboxChangeEvent) => void;
     clearSelection: () => void;
     goToLocation: (locations: LocationPlainModel) => void;
+    goToPreviousLocation: (locations: LocationPlainModel[]) => void;
 }
 
 export const LocationContent = (props: ILocationContentProps) => {
-    const { currentLocation, locations, selectedLocations, setSelectedLocations, clearSelection, goToLocation } = props;
+    const { currentLocation, locations, selectedLocations, setSelectedLocations, clearSelection, goToLocation, goToPreviousLocation } = props;
 
     const openDirectory = useOpenDirectory();
 
@@ -44,6 +45,13 @@ export const LocationContent = (props: ILocationContentProps) => {
     const locationsToShow = !!currentLocation
         ? locations.filter(l => l.parentId === currentLocation.id)
         : locations.filter(l => !l.parentId);
+
+    useEffect(() => {
+        if (!!currentLocation && locationsToShow.length === 0) {
+            clearSelection();
+            goToPreviousLocation(locations);
+        }
+    })
 
     return (
         <>

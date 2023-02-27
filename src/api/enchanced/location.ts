@@ -74,10 +74,20 @@ const enhancedApi = api.enhanceEndpoints({
   
             dispatch(
               api.util.updateQueryData('locationAll', undefined, (draft) => {
-                const removedLocations = draft.filter(l => response.data.includes(l.id))
+                const removedLocationIds = response.data?.removedLocationIds ?? [];
+                const orphansParent = response.data?.orphansParent;
+
+                const removedLocations = draft.filter(l => removedLocationIds.includes(l.id));
   
                 for (const removedLocation of removedLocations){
                   removedLocation.isRemoved = true;
+                }
+
+                const orphans = draft.filter(l => !!l.parentId && !l.isRemoved
+                  && removedLocationIds.includes(l.parentId));
+                
+                for (const orphan of orphans){
+                  orphan.parentId = orphansParent;
                 }
               })
             )

@@ -1,4 +1,4 @@
-import { CommandResultWithOfListGuid, CommandResultWithOfUpdateLocationCommandResultModel, CreateLocationCommandModel, LocationModel, LocationPlainModel, RemoveLocationCommandModel, UpdateLocationCommandModel } from 'domain/models';
+import { CommandResultWithOfListGuid, CommandResultWithOfRemoveLocationCommandResultModel, CommandResultWithOfUpdateLocationCommandResultModel, CreateLocationCommandModel, LocationModel, LocationPlainModel, RemoveLocationCommandModel, UpdateLocationCommandModel } from 'domain/models';
 import { emptySplitApi as api } from '../emptyApi';
 
 const injectedRtkApi = api.injectEndpoints({
@@ -105,7 +105,7 @@ export type LocationRemoveTagsApiArg = {
   updateLocationCommandModel: UpdateLocationCommandModel;
 };
 export type LocationRemoveApiResponse =
-  /** status 200  */ CommandResultWithOfListGuid;
+  /** status 200  */ CommandResultWithOfRemoveLocationCommandResultModel;
 export type LocationRemoveApiArg = {
   removeLocationCommandModel: RemoveLocationCommandModel;
 };

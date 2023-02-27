@@ -103,10 +103,20 @@
   export type CommandResultWithOfUpdateLocationCommandResultModel =
     CommandResult & {
       data?: UpdateLocationCommandResultModel;
-    };
+  };
 
   export type UpdateLocationCommandModel = {
     path: string;
     isRecoursive: boolean;
     tags: string[];
+  };
+
+  export type CommandResultWithOfRemoveLocationCommandResultModel =
+    CommandResult & {
+      data?: RemoveLocationCommandResultModel;
+  }
+
+  export type RemoveLocationCommandResultModel = {
+    removedLocationIds: string[];
+    orphansParent: string;
   };
