@@ -1,27 +1,30 @@
 import { LocationPlainModel } from "domain/models";
-import { useCallback, useState } from "react";
+import { useCallback, useMemo } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
 export const useLocationsNavigation = () => {
     const currentPath = useLocation();
     const navigate = useNavigate();
 
-    const [ currentLocation, setCurrentLocation ] =
-        useState<LocationPlainModel | undefined>(undefined);
-
     const goToLocation = useCallback((location: LocationPlainModel) => {
-        setCurrentLocation(location)
-        navigate(`${currentPath.pathname}/${location.name}`);
-    }, [ setCurrentLocation, navigate ]);
+        navigate(`${currentPath.pathname}/${location.id}`);
+    }, [ currentPath, navigate ]);
 
-    const goToPreviousLocation = useCallback((locations: LocationPlainModel[]) => {
-        const prevLocation = locations.find(l => l.id === currentLocation?.parentId);
-
-        setCurrentLocation(prevLocation);
+    const goToPreviousLocation = useCallback(() => {
         navigate(-1);
-    }, [ currentLocation, setCurrentLocation, navigate ]);
+    }, [ navigate ]);
+
+    const currentLocation = useMemo(() => {
+        const lastPathPart = currentPath.pathname.split('/').filter(i => i).pop();
+        
+        return lastPathPart === "locations"
+            ? undefined
+            : lastPathPart;
+    }, [ currentPath ]);
+    
 
     return {
+        currentPath,
         currentLocation,
         goToLocation,
         goToPreviousLocation,

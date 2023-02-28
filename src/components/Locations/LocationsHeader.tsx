@@ -1,24 +1,29 @@
 import {  Button, PageHeader } from "antd";
 import { TabHeaderContainer } from "components/Common/Tab/Tab.styles";
 import { LocationsBreadCrumb } from "./LocationsBreadCrumb";
-import { LocationPlainModel } from "domain/models";
+import { LocationsViewType } from "domain/LocationsViewType";
+import { useLocationsNavigation } from "customHooks/useLocationsNavigation";
 
 interface ILocationHeaderProps {
-    currentLocation: LocationPlainModel | undefined;
-    locations: LocationPlainModel[];
+    viewType: LocationsViewType;
     selectedLocations: string[];
     clearSelection: () => void;
-    goToPreviousLocation: (locations: LocationPlainModel[]) => void;
 }
 
 export const LocationsHeader = (props: ILocationHeaderProps) => {
-    const { currentLocation, locations, selectedLocations, clearSelection, goToPreviousLocation } = props;
+    const { viewType, selectedLocations, clearSelection } = props;
+
+    const {
+        currentLocation,
+        goToPreviousLocation,
+    } = useLocationsNavigation();
     
-    const canGoBack = !!currentLocation;
+    const isTree = viewType === LocationsViewType.Tree;
+    const canGoBack = isTree && !!currentLocation;
 
     const onBackClicked = () => {
         clearSelection();
-        goToPreviousLocation(locations);
+        goToPreviousLocation();
     }
 
     return (
@@ -28,7 +33,7 @@ export const LocationsHeader = (props: ILocationHeaderProps) => {
                 ghost={false}
                 title="Locations"
                 onBack={canGoBack ? () => onBackClicked() : undefined}
-                breadcrumbRender={() => <LocationsBreadCrumb />}
+                breadcrumbRender={() => <LocationsBreadCrumb viewType={viewType} />}
                 extra={
                     <>
                         {selectedLocations.length > 0 &&
