@@ -7,6 +7,7 @@ import { Space } from "antd";
 import { CheckboxChangeEvent } from "antd/lib/checkbox";
 import { useOpenDirectory } from "customHooks/useOpenDirectory";
 import { useLocationsNavigation } from "customHooks/useLocationsNavigation";
+import { usePerformRecoursiveAction } from "customHooks/usePerformRecoursiveAction";
 
 interface ILocationsTreeContentProps {
     locations: LocationPlainModel[];
@@ -32,7 +33,7 @@ export const LocationsTreeContent = (props: ILocationsTreeContentProps) => {
         goToPreviousLocation,
     } = useLocationsNavigation();
 
-    const [ removeLocation, removeLocationResult ] = useLocationRemoveMutation();
+    const [ removeLocationQuery, removeLocationResult ] = useLocationRemoveMutation();
     
     useQueryResult(removeLocationResult);
 
@@ -56,21 +57,28 @@ export const LocationsTreeContent = (props: ILocationsTreeContentProps) => {
             goToPreviousLocation();
         }
     })
+    
+    const removeLocation = usePerformRecoursiveAction(
+        "The directory contains children",
+        "Do you want to remove sub-directories as well?",
+        (location: LocationPlainModel, isRecoursive: boolean) =>
+            removeLocationQuery({ removeLocationCommandModel: { locationId: location.id, isRecoursive: isRecoursive } }),
+        locations
+    );
 
     return (
         <Space direction="vertical" style={{ display: 'flex' }}>
             {locationsToShow.map(l =>
                 <LocationContainer
-                    key={l.path}
-                    title={l.name}
-                    notFound={l.notFound}
+                    key={l.id}
+                    location={l}
                     isSelected={selectedLocations.includes(l.id)}
                     onSelect={(e) => setSelectedLocations(l.id, e)}
-                    onClick={() => setSelectedLocation(l)}
-                    onDoubleClick={() => onTabClick(l)}
-                    onOpen={() => openDirectory(l)}
-                    onEdit={() => setSelectedLocation(l)}
-                    onRemove={() => removeLocation({ removeLocationCommandModel: { locationId: l.id, isRecoursive: false } })} />)}
+                    onClick={setSelectedLocation}
+                    onDoubleClick={onTabClick}
+                    onOpen={openDirectory}
+                    onEdit={setSelectedLocation}
+                    onRemove={removeLocation} />)}
         </Space>
     );
 };

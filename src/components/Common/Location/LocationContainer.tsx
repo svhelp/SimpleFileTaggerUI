@@ -1,4 +1,4 @@
-import { Button, Checkbox, Popconfirm } from "antd"
+import { Button, Checkbox } from "antd"
 import {
     EditOutlined,
     DeleteOutlined,
@@ -8,22 +8,28 @@ import {
 import { LocationCardContainer, LocationNameContainer, LocationToolbar } from "./LocationContainer.styles";
 import { CheckboxChangeEvent } from "antd/lib/checkbox";
 import { useSingleAndDoubleClick } from "customHooks/useSingleAndDoubleClick";
+import { LocationPlainModel } from "domain/models";
 
 interface ILocationContainerProps {
-    title: string;
     isSelected?: boolean;
-    notFound?: boolean;
+    location: LocationPlainModel;
     onSelect?: (e: CheckboxChangeEvent) => void;
-    onClick: () => void;
-    onDoubleClick?: () => void;
-    onOpen?: () => void;
-    onEdit?: () => void;
-    onRemove?: () => void;
+    onClick: (location: LocationPlainModel) => void;
+    onDoubleClick?: (location: LocationPlainModel) => void;
+    onOpen?: (location: LocationPlainModel) => void;
+    onEdit?: (location: LocationPlainModel) => void;
+    onRemove?: (location: LocationPlainModel) => void;
 }
 
 export const LocationContainer = (props: ILocationContainerProps) => {
+    const { location } = props;
 
-    const onLocationClick = useSingleAndDoubleClick(props.onClick, props.onDoubleClick);
+    const onLocationClick = useSingleAndDoubleClick(
+        () => props.onClick(location),
+        !!props.onDoubleClick
+            ? () => props.onDoubleClick?.(location)
+            : undefined
+    );
 
     return (
         <LocationCardContainer hoverable>
@@ -32,38 +38,29 @@ export const LocationContainer = (props: ILocationContainerProps) => {
 
             <LocationNameContainer onClick={onLocationClick}>
                 <p>
-                    {props.title}
+                    {location.name}
                 </p>
 
-                {props.notFound && <WarningOutlined style={{color: "#a00"}} />}
+                {location.notFound && <WarningOutlined style={{color: "#a00"}} />}
             </LocationNameContainer>
 
             <LocationToolbar>
                 {props.onOpen &&
-                    <Button type="text" onClick={props.onOpen}>
+                    <Button type="text" onClick={() => props.onOpen?.(location)}>
                         <FolderOpenOutlined />
                     </Button>}
                 
                 {props.onEdit &&
-                    <Button type="text" onClick={props.onEdit}>
+                    <Button type="text" onClick={() => props.onEdit?.(location)}>
                         <EditOutlined />
                     </Button>}
                 
                 {props.onRemove &&
-                    <Popconfirm
-                        title="Are you sure?"
-                        onConfirm={props.onRemove}
-                        okText="Yes"
-                        cancelText="No"
-                    >
-                        <Button type="text">
-                            <DeleteOutlined />
-                        </Button>
-                    </Popconfirm>
+                    <Button type="text" onClick={() => props.onRemove?.(location)}>
+                        <DeleteOutlined />
+                    </Button>
                 }
-                
             </LocationToolbar>
-
         </LocationCardContainer>
     )
 }

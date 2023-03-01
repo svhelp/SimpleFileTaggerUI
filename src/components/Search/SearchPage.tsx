@@ -6,6 +6,7 @@ import { LocationContainer } from "components/Common/Location/LocationContainer"
 import { Tab } from "components/Common/Tab/Tab";
 import { TabHeaderContainer, TabContentContainer } from "components/Common/Tab/Tab.styles";
 import { useGetVirtualRemovable } from 'customHooks/useGetVirtualRemovable';
+import { LocationPlainModel } from 'domain/models';
 import { useCallback, useState } from "react";
 import styled from 'styled-components';
 
@@ -21,7 +22,8 @@ export const SearchPage = () => {
         setSearchValue(searchQuery)
     }, [ searchQuery, setSearchValue ]);
 
-    const openDirectory = useCallback((path: string) => window.electron.shell.openLocation(path), []);
+    const openDirectory = useCallback((location: LocationPlainModel) =>
+        window.electron.shell.openLocation(location.path), []);
 
     return (
         <Tab isError={isError} isFetching={isFetching} error={error}>
@@ -44,7 +46,7 @@ export const SearchPage = () => {
             <TabContentContainer>
                 <Space direction="vertical" style={{ display: 'flex' }}>
                     {(data ?? []).map(loc =>
-                        <LocationContainer key={loc.id} title={loc.name} onClick={() => openDirectory(loc.path)} />)}
+                        <LocationContainer key={loc.id} location={loc} onClick={openDirectory} />)}
                 </Space>
             </TabContentContainer>
         </Tab>

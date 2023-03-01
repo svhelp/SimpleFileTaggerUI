@@ -5,11 +5,12 @@ import { TagsListContent } from "components/Common/Tag/TagsListContent";
 import { LocationPlainModel, TagPlainModel } from "domain/models";
 import { useState, useEffect, useCallback } from "react";
 import { useQueryResult } from "customHooks/useQueryResult";
-import { useLocationRemoveMutation, useLocationSetTagsMutation } from "api/enchanced/location";
+import { useLocationAllQuery, useLocationRemoveMutation, useLocationSetTagsMutation } from "api/enchanced/location";
 import { useTagGetQuery } from "api/enchanced/tag";
 import { useOpenDirectory } from 'customHooks/useOpenDirectory';
 import { useGetVirtualRemovable } from 'customHooks/useGetVirtualRemovable';
 import { compareArrays } from 'utils/compare';
+import { usePerformRecoursiveAction } from 'customHooks/usePerformRecoursiveAction';
 
 interface ILocationDrawerProps {
     location?: LocationPlainModel;
@@ -22,9 +23,10 @@ export const LocationDrawer = (props: ILocationDrawerProps) => {
     const [ name, setName ] = useState("");
     const [ tags, setTags ] = useState<TagPlainModel[]>([]);
 
+    const { data: locations, isFetching, isError, error } = useGetVirtualRemovable(useLocationAllQuery);
     const { data: availableTags, isFetching: isTagsFetching, isError: isTagsError, error: tagsError } = useGetVirtualRemovable(useTagGetQuery);
 
-    const [ removeLocation, removeLocationResult ] = useLocationRemoveMutation();
+    const [ removeLocationQuery, removeLocationResult ] = useLocationRemoveMutation();
     const [ updateLocationQuery, updateLocationResult ] = useLocationSetTagsMutation();
     
     useQueryResult(updateLocationResult);
@@ -53,13 +55,21 @@ export const LocationDrawer = (props: ILocationDrawerProps) => {
         updateLocationQuery(model);
     }
     
+    const removeLocation = usePerformRecoursiveAction(
+        "The directory contains children",
+        "Do you want to remove sub-directories as well?",
+        (location: LocationPlainModel, isRecoursive: boolean) =>
+            removeLocationQuery({ removeLocationCommandModel: { locationId: location.id, isRecoursive: isRecoursive } }),
+        locations
+    );
+
     const onRemove = useCallback(() => {
         if (!location){
             return;
         }
 
         closeDrawer();
-        removeLocation({ removeLocationCommandModel: { locationId: location.id, isRecoursive: false } });
+        removeLocation(location);
     }, [ closeDrawer, removeLocation, location ]);
 
     const hasChanges = !!location &&

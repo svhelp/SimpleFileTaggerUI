@@ -5,6 +5,7 @@ import { LocationContainer } from "components/Common/Location/LocationContainer"
 import { Space } from "antd";
 import { CheckboxChangeEvent } from "antd/lib/checkbox";
 import { useOpenDirectory } from "customHooks/useOpenDirectory";
+import { usePerformRecoursiveAction } from "customHooks/usePerformRecoursiveAction";
 
 interface ILocationsListContentProps {
     locations: LocationPlainModel[];
@@ -23,24 +24,31 @@ export const LocationsListContent = (props: ILocationsListContentProps) => {
 
     const openDirectory = useOpenDirectory();
 
-    const [ removeLocation, removeLocationResult ] = useLocationRemoveMutation();
+    const [ removeLocationQuery, removeLocationResult ] = useLocationRemoveMutation();
     
     useQueryResult(removeLocationResult);
+
+    const removeLocation = usePerformRecoursiveAction(
+        "The directory contains children",
+        "Do you want to remove sub-directories as well?",
+        (location: LocationPlainModel, isRecoursive: boolean) =>
+            removeLocationQuery({ removeLocationCommandModel: { locationId: location.id, isRecoursive: isRecoursive } }),
+        locations
+    );
 
     return (
         <Space direction="vertical" style={{ display: 'flex' }}>
             {locations.map(l =>
                 <LocationContainer
-                    key={l.path}
-                    title={l.name}
-                    notFound={l.notFound}
+                    key={l.id}
+                    location={l}
                     isSelected={selectedLocations.includes(l.id)}
                     onSelect={(e) => setSelectedLocations(l.id, e)}
-                    onClick={() => setSelectedLocation(l)}
-                    onDoubleClick={() => openDirectory(l)}
-                    onOpen={() => openDirectory(l)}
-                    onEdit={() => setSelectedLocation(l)}
-                    onRemove={() => removeLocation({ removeLocationCommandModel: { locationId: l.id, isRecoursive: false } })} />)}
+                    onClick={setSelectedLocation}
+                    onDoubleClick={openDirectory}
+                    onOpen={openDirectory}
+                    onEdit={setSelectedLocation}
+                    onRemove={removeLocation} />)}
         </Space>
     );
 };
