@@ -14,12 +14,14 @@ import { LocationDrawer } from "./LocationDrawer";
 import { CreateLocationModal } from "./CreateLocationModal";
 import { LocationPlainModel } from "domain/models";
 import { LocationsListContent } from "./LocationsListContent";
+import { LocationWizardModal } from "./Wizard/LocationWizard";
 
 export const LocationsPage = () => {
     const [ viewType, setViewType ] = useState(LocationsViewType.Tree);
 
     const [ isAddingLocation, setIsAddingLocation ] = useState(false);
     const [ selectedLocation, setSelectedLocation ] = useState<LocationPlainModel | undefined>(undefined);
+    const [ wizardLocation, setWizardLocation ] = useState<LocationPlainModel | undefined>(undefined);
 
     const { data, isFetching, isError, error } = useGetVirtualRemovable(useLocationAllQuery);
     
@@ -63,12 +65,18 @@ export const LocationsPage = () => {
             
             <LocationDrawer
                 location={selectedLocation}
+                openWizard={setWizardLocation}
                 closeDrawer={() => setSelectedLocation(undefined)}
             />
 
             <CreateLocationModal
                 isModalOpen={isAddingLocation}
                 closeModal={() => setIsAddingLocation(false)} />
+
+            <LocationWizardModal
+                isModalOpen={!!wizardLocation}
+                location={wizardLocation}
+                closeModal={() => setWizardLocation(undefined)} />
         </Tab>
     )
 }

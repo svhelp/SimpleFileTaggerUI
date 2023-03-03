@@ -11,14 +11,16 @@ import { useOpenDirectory } from 'customHooks/useOpenDirectory';
 import { useGetVirtualRemovable } from 'customHooks/useGetVirtualRemovable';
 import { compareArrays } from 'utils/compare';
 import { usePerformRecoursiveAction } from 'customHooks/usePerformRecoursiveAction';
+import styled from 'styled-components';
 
 interface ILocationDrawerProps {
     location?: LocationPlainModel;
+    openWizard: (location: LocationPlainModel) => void;
     closeDrawer: () => void;
 }
 
 export const LocationDrawer = (props: ILocationDrawerProps) => {
-    const { location, closeDrawer } = props;
+    const { location, closeDrawer, openWizard } = props;
 
     const [ name, setName ] = useState("");
     const [ tags, setTags ] = useState<TagPlainModel[]>([]);
@@ -72,6 +74,11 @@ export const LocationDrawer = (props: ILocationDrawerProps) => {
         removeLocation(location);
     }, [ closeDrawer, removeLocation, location ]);
 
+    const startWizard = () => {
+        openWizard(location!);
+        closeDrawer();
+    }
+
     const hasChanges = !!location &&
         !compareArrays(tags.map(t => t.id), location.tagIds);
 
@@ -85,6 +92,12 @@ export const LocationDrawer = (props: ILocationDrawerProps) => {
         >
             <DrawerContent>
                 <DrawerBody>
+                    <WizardButtonContainer>
+                        <Button type="primary" onClick={startWizard}>
+                            Wizard
+                        </Button>
+                    </WizardButtonContainer>
+
                     <TagsListContent
                         tags={tags}
                         availableTags={availableTags ?? []}
@@ -117,3 +130,7 @@ export const LocationDrawer = (props: ILocationDrawerProps) => {
         </Drawer>
     );
 }
+
+export const WizardButtonContainer = styled.div`
+    margin-bottom: 8px;
+`
