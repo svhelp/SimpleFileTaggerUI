@@ -1,13 +1,12 @@
-import { Modal, Space } from "antd";
+import { Modal } from "antd";
 import { useLocationSetTagsMutation } from "api/enchanced/location";
 import { useTagGetQuery } from "api/enchanced/tag";
 import { useTagGroupGetQuery } from "api/enchanced/taggroup";
-import { useThumbnailGetQuery } from "api/enchanced/thumbnail";
-import { WizardTagContainer } from "components/Common/Tag/WizardTagContainer";
 import { useGetVirtualRemovable } from "customHooks/useGetVirtualRemovable";
-import { LocationPlainModel, TagGroupPlainModel, TagPlainModel } from "domain/models";
-import { useState } from "react";
+import { LocationPlainModel } from "domain/models";
+import { useEffect, useState } from "react";
 import { useQueryResult } from "customHooks/useQueryResult";
+import { LocationWizardGroup } from "./LocationWizardGroup";
 
 interface ILocationWizardModalProps {
     isModalOpen: boolean;
@@ -18,7 +17,7 @@ interface ILocationWizardModalProps {
 export const LocationWizardModal = (props: ILocationWizardModalProps) => {
     const { location } = props;
 
-    const [ tags, setTags ] = useState(location?.tagIds ?? []);
+    const [ tags, setTags ] = useState<string[]>([]);
 
     const { data: tagGroups, isFetching, isError, error } = useGetVirtualRemovable(useTagGroupGetQuery);
     const { data: availableTags, isFetching: isTagsFetching, isError: isTagsError, error: tagsError } = useGetVirtualRemovable(useTagGetQuery);
@@ -27,11 +26,24 @@ export const LocationWizardModal = (props: ILocationWizardModalProps) => {
     
     useQueryResult(updateLocationResult);
     
+    useEffect(() => {
+        if (!location || !availableTags){
+            return;
+        }
+
+        const initialTags = availableTags.filter(t => location.tagIds.includes(t.id)).map(t => t.name);
+        setTags(initialTags);
+    }, [ location, availableTags, setTags ]);
+    
     const onToggleTag = (tagId: string) => {
         setTags(state =>
             state.includes(tagId)
                 ? state.filter(t => t !== tagId)
                 : state.concat([tagId]));
+    }
+
+    const closeModal = () => {
+        props.closeModal();
     }
 
     const updateLocation = () => {
@@ -44,12 +56,7 @@ export const LocationWizardModal = (props: ILocationWizardModalProps) => {
         }
 
         updateLocationQuery(model);
-    }
-
-    const closeModal = () => {
-        setTags([]);
-
-        props.closeModal();
+        closeModal();
     }
 
     const otherTags = availableTags.filter(t => !tagGroups.some(gr => gr.tagIds.includes(t.id)));
@@ -67,6 +74,7 @@ export const LocationWizardModal = (props: ILocationWizardModalProps) => {
                         <LocationWizardGroup
                             key={group.id}
                             groupName={group.name}
+                            isRequired={group.isRequired}
                             groupTags={availableTags.filter(t => group.tagIds.includes(t.id))}
                             selectedTags={tags}
                             onToggleTag={onToggleTag} />)}
@@ -76,59 +84,5 @@ export const LocationWizardModal = (props: ILocationWizardModalProps) => {
                     selectedTags={tags}
                     onToggleTag={onToggleTag} />
         </Modal>
-    )
-}
-
-interface ILocationWizardGroupProps {
-    groupName: string;
-    groupTags: TagPlainModel[];
-    selectedTags: string[];
-    onToggleTag: (tagId: string) => void;
-}
-
-export const LocationWizardGroup = (props: ILocationWizardGroupProps) => {
-    const { groupName, groupTags, selectedTags, onToggleTag } = props;
-
-
-    const isSelectionActive = groupTags.some(t => selectedTags.includes(t.id));
-
-    return (
-        <div>
-            <h2>
-                {groupName}
-            </h2>
-            <Space wrap>
-                {groupTags.map(tag => 
-                    <TagCard
-                        key={tag.id}
-                        tag={tag}
-                        isSelected={selectedTags.includes(tag.id)}
-                        isSelectionActive={isSelectionActive}
-                        onClick={() => onToggleTag(tag.id)} />)}
-            </Space>
-        </div>
-    )
-}
-
-interface ITagCardProps {
-    tag: TagPlainModel
-    isSelected: boolean;
-    isSelectionActive: boolean;
-    onClick: () => void;
-}
-
-export const TagCard = (props: ITagCardProps) => {
-    const { tag, isSelected, isSelectionActive, onClick } = props;
-
-    const { data: thumbnail, isFetching, isError, error } = useThumbnailGetQuery({ id: tag?.id });
-
-    return (
-        <WizardTagContainer
-            key={tag.id}
-            title={tag.name}
-            background={thumbnail?.image}
-            isSelected={isSelected}
-            isSelectionActive={isSelectionActive}
-            onClick={onClick} />
     )
 }

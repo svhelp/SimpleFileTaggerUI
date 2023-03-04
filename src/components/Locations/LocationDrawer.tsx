@@ -41,7 +41,7 @@ export const LocationDrawer = (props: ILocationDrawerProps) => {
 
         setName(location.name);
         setTags(availableTags?.filter(t => location.tagIds.includes(t.id)) ?? []);
-    }, [ location ]);
+    }, [ location, availableTags ]);
     
     const openDirectory = useOpenDirectory();
     
