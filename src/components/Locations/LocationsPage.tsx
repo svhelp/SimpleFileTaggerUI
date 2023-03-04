@@ -1,6 +1,6 @@
 import { LocationsTreeContent } from "./LocationsTreeContent";
-import { Tab } from "components/Common/Tab/Tab";
-import { TabContentContainer } from "components/Common/Tab/Tab.styles";
+import { Tab } from "components/Common/Page/Tab";
+import { TabContentContainer } from "components/Common/Page/Tab.styles";
 import { useLocationAllQuery } from "api/enchanced/location";
 import { LocationsHeader } from "./LocationsHeader";
 import { useSelectedItems } from "customHooks/useSelectedItems";
@@ -15,12 +15,12 @@ import { CreateLocationModal } from "./CreateLocationModal";
 import { LocationPlainModel } from "domain/models";
 import { LocationsListContent } from "./LocationsListContent";
 import { LocationWizardModal } from "./Wizard/LocationWizard";
+import { PageContainer } from "components/Common/Page/Page.styles";
 
 export const LocationsPage = () => {
     const [ viewType, setViewType ] = useState(LocationsViewType.Tree);
 
     const [ isAddingLocation, setIsAddingLocation ] = useState(false);
-    const [ selectedLocation, setSelectedLocation ] = useState<LocationPlainModel | undefined>(undefined);
     const [ wizardLocation, setWizardLocation ] = useState<LocationPlainModel | undefined>(undefined);
 
     const { data, isFetching, isError, error } = useGetVirtualRemovable(useLocationAllQuery);
@@ -32,52 +32,50 @@ export const LocationsPage = () => {
     };
 
     return (
-        <Tab isError={isError} isFetching={isFetching} error={error}>
-            <LocationsHeader
-                viewType={viewType}
-                selectedLocations={selectedLocations}
-                clearSelection={clearSelection} />
+        <PageContainer>
+            <Tab isError={isError} isFetching={isFetching} error={error} hasDetails>
+                <LocationsHeader
+                    viewType={viewType}
+                    selectedLocations={selectedLocations}
+                    clearSelection={clearSelection} />
 
-            <ToolbarContainer>
-                <Button icon={<PlusOutlined />} onClick={() => setIsAddingLocation(true)} >
-                    Create
-                </Button>
-                <Radio.Group value={viewType} onChange={onViewTypeChange}>
-                    <Radio.Button value={LocationsViewType.List}><UnorderedListOutlined /></Radio.Button>
-                    <Radio.Button value={LocationsViewType.Tree}><PartitionOutlined /></Radio.Button>
-                </Radio.Group>
-            </ToolbarContainer>
+                <ToolbarContainer>
+                    <Button icon={<PlusOutlined />} onClick={() => setIsAddingLocation(true)} >
+                        Create
+                    </Button>
+                    <Radio.Group value={viewType} onChange={onViewTypeChange}>
+                        <Radio.Button value={LocationsViewType.List}><UnorderedListOutlined /></Radio.Button>
+                        <Radio.Button value={LocationsViewType.Tree}><PartitionOutlined /></Radio.Button>
+                    </Radio.Group>
+                </ToolbarContainer>
 
-            <TabContentContainer>
-                {viewType === LocationsViewType.Tree
-                    ? <LocationsTreeContent
-                        locations={data ?? []}
-                        selectedLocations={selectedLocations}
-                        setSelectedLocation={setSelectedLocation}
-                        setSelectedLocations={setSelectedLocations}
-                        clearSelection={clearSelection} />
-                    : <LocationsListContent
-                        locations={data ?? []}
-                        selectedLocations={selectedLocations}
-                        setSelectedLocation={setSelectedLocation}
-                        setSelectedLocations={setSelectedLocations} />}
-            </TabContentContainer>
-            
+                <TabContentContainer>
+                    {viewType === LocationsViewType.Tree
+                        ? <LocationsTreeContent
+                            locations={data ?? []}
+                            selectedLocations={selectedLocations}
+                            setSelectedLocations={setSelectedLocations}
+                            clearSelection={clearSelection} />
+                        : <LocationsListContent
+                            locations={data ?? []}
+                            selectedLocations={selectedLocations}
+                            setSelectedLocations={setSelectedLocations} />}
+                </TabContentContainer>
+
+                <CreateLocationModal
+                    isModalOpen={isAddingLocation}
+                    closeModal={() => setIsAddingLocation(false)} />
+
+                <LocationWizardModal
+                    isModalOpen={!!wizardLocation}
+                    location={wizardLocation}
+                    closeModal={() => setWizardLocation(undefined)} />
+            </Tab>
+
             <LocationDrawer
-                location={selectedLocation}
-                openWizard={setWizardLocation}
-                closeDrawer={() => setSelectedLocation(undefined)}
-            />
-
-            <CreateLocationModal
-                isModalOpen={isAddingLocation}
-                closeModal={() => setIsAddingLocation(false)} />
-
-            <LocationWizardModal
-                isModalOpen={!!wizardLocation}
-                location={wizardLocation}
-                closeModal={() => setWizardLocation(undefined)} />
-        </Tab>
+                selectedLocationIds={selectedLocations}
+                openWizard={setWizardLocation} />
+        </PageContainer>
     )
 }
 

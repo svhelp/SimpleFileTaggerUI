@@ -4,7 +4,6 @@ import { useQueryResult } from "customHooks/useQueryResult";
 import { useLocationRemoveMutation } from "api/enchanced/location";
 import { LocationContainer } from "components/Common/Location/LocationContainer";
 import { Space } from "antd";
-import { CheckboxChangeEvent } from "antd/lib/checkbox";
 import { useOpenDirectory } from "customHooks/useOpenDirectory";
 import { useLocationsNavigation } from "customHooks/useLocationsNavigation";
 import { usePerformRecoursiveAction } from "customHooks/usePerformRecoursiveAction";
@@ -12,8 +11,7 @@ import { usePerformRecoursiveAction } from "customHooks/usePerformRecoursiveActi
 interface ILocationsTreeContentProps {
     locations: LocationPlainModel[];
     selectedLocations: string[];
-    setSelectedLocation: (element: LocationPlainModel) => void;
-    setSelectedLocations: (elementId: string, e: CheckboxChangeEvent) => void;
+    setSelectedLocations: (elementId: string) => void;
     clearSelection: () => void;
 }
 
@@ -21,7 +19,6 @@ export const LocationsTreeContent = (props: ILocationsTreeContentProps) => {
     const {
         locations,
         selectedLocations,
-        setSelectedLocation,
         setSelectedLocations,
         clearSelection,
     } = props;
@@ -73,12 +70,11 @@ export const LocationsTreeContent = (props: ILocationsTreeContentProps) => {
                     key={l.id}
                     location={l}
                     isSelected={selectedLocations.includes(l.id)}
-                    onSelect={(e) => setSelectedLocations(l.id, e)}
-                    onClick={setSelectedLocation}
+                    onClick={() => setSelectedLocations(l.id)}
                     onDoubleClick={onTabClick}
                     onOpen={openDirectory}
-                    onEdit={setSelectedLocation}
-                    onRemove={removeLocation} />)}
+                    onRemove={removeLocation}
+                    isSelectionActive />)}
         </Space>
     );
 };

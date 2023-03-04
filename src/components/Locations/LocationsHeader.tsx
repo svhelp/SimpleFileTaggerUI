@@ -1,5 +1,5 @@
 import {  Button, PageHeader } from "antd";
-import { TabHeaderContainer } from "components/Common/Tab/Tab.styles";
+import { TabHeaderContainer } from "components/Common/Page/Tab.styles";
 import { LocationsBreadCrumb } from "./LocationsBreadCrumb";
 import { LocationsViewType } from "domain/LocationsViewType";
 import { useLocationsNavigation } from "customHooks/useLocationsNavigation";

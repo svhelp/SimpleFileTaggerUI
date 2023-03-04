@@ -1,6 +1,11 @@
 import { Card } from "antd";
 import styled from "styled-components";
 
+interface ITagBackgroundProps {
+    isSelected?: boolean;
+    isSelectionActive?: boolean;
+}
+
 export const TagCardContainer = styled(Card)`
     width: 240px;
     height: 160px;
@@ -19,7 +24,7 @@ export const TagCardContainer = styled(Card)`
         }
 
         :hover img {
-            filter: brightness(0.7);
+            filter: grayscale(0);
         }
         
         :hover p {
@@ -28,15 +33,15 @@ export const TagCardContainer = styled(Card)`
     }
 `
 
-export const TagBackground = styled.img`
+export const TagBackground = styled.img<ITagBackgroundProps>`
     width: 100%;
     height: 100%;
     position: absolute;
     object-fit: cover;
 
-    filter: brightness(0.9);
+    filter: grayscale(${({isSelected, isSelectionActive}) => !isSelectionActive || isSelected ? "0" : "0.8"});
 
-    transition: filter 0.2s;
+    transition: filter 0.3s;
 `
 
 export const TagNameContainer = styled.div`

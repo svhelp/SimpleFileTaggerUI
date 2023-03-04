@@ -1,9 +1,8 @@
 import { FolderOpenOutlined } from '@ant-design/icons';
-import { Drawer, Button, Divider } from "antd";
-import { DrawerBody, DrawerButtonContainer, DrawerContent, DrawerFooter } from "components/Common/Drawer.styles";
+import { Button } from "antd";
 import { TagsListContent } from "components/Common/Tag/TagsListContent";
 import { LocationPlainModel, TagPlainModel } from "domain/models";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { useQueryResult } from "customHooks/useQueryResult";
 import { useLocationAllQuery, useLocationRemoveMutation, useLocationSetTagsMutation } from "api/enchanced/location";
 import { useTagGetQuery } from "api/enchanced/tag";
@@ -12,16 +11,15 @@ import { useGetVirtualRemovable } from 'customHooks/useGetVirtualRemovable';
 import { compareArrays } from 'utils/compare';
 import { usePerformRecoursiveAction } from 'customHooks/usePerformRecoursiveAction';
 import styled from 'styled-components';
+import { DetailsSection, DetailsSectionFooter } from 'components/Common/Page/DetailsSection';
+import { DetailsSectionBody, DetailsSectionBodyButtons, DetailsSectionFooterButtons } from 'components/Common/Page/DetailsSection.styles';
 
 interface ILocationDrawerProps {
-    location?: LocationPlainModel;
+    selectedLocationIds: string[];
     openWizard: (location: LocationPlainModel) => void;
-    closeDrawer: () => void;
 }
 
-export const LocationDrawer = (props: ILocationDrawerProps) => {
-    const { location, closeDrawer, openWizard } = props;
-
+export const LocationDrawer = ({ selectedLocationIds, openWizard }: ILocationDrawerProps) => {
     const [ name, setName ] = useState("");
     const [ tags, setTags ] = useState<TagPlainModel[]>([]);
 
@@ -32,7 +30,12 @@ export const LocationDrawer = (props: ILocationDrawerProps) => {
     const [ updateLocationQuery, updateLocationResult ] = useLocationSetTagsMutation();
     
     useQueryResult(updateLocationResult);
-    useQueryResult(removeLocationResult, closeDrawer);
+    useQueryResult(removeLocationResult);
+
+    const location = useMemo(() => selectedLocationIds.length === 1
+        ? locations.find(t => t.id === selectedLocationIds[0])
+        : undefined,
+        [ selectedLocationIds, locations ]);
 
     useEffect(() => {
         if (!location){
@@ -40,15 +43,19 @@ export const LocationDrawer = (props: ILocationDrawerProps) => {
         }
 
         setName(location.name);
-        setTags(availableTags?.filter(t => location.tagIds.includes(t.id)) ?? []);
-    }, [ location, availableTags ]);
+        setTags(availableTags.filter(t => location.tagIds.includes(t.id)) ?? []);
+    }, [ location, availableTags, setName, setTags ]);
     
     const openDirectory = useOpenDirectory();
     
     const updateLocation = () => {
+        if (!location){
+            return;
+        }
+
         const model = {
             updateLocationCommandModel: {
-                path: location!.path,
+                path: location?.path,
                 tags: tags.map(t => t.name),
                 isRecoursive: false,
             }
@@ -56,6 +63,15 @@ export const LocationDrawer = (props: ILocationDrawerProps) => {
 
         updateLocationQuery(model);
     }
+
+    const onCancel = useCallback(() => {
+        if (!location){
+            return;
+        }
+
+        setName(location.name);
+        setTags(availableTags.filter(t => location.tagIds.includes(t.id)) ?? []);
+    }, [ location, availableTags, setName, setTags ]);
     
     const removeLocation = usePerformRecoursiveAction(
         "The directory contains children",
@@ -70,28 +86,21 @@ export const LocationDrawer = (props: ILocationDrawerProps) => {
             return;
         }
 
-        closeDrawer();
         removeLocation(location);
-    }, [ closeDrawer, removeLocation, location ]);
+    }, [ removeLocation, location ]);
 
     const startWizard = () => {
         openWizard(location!);
-        closeDrawer();
     }
 
     const hasChanges = !!location &&
         !compareArrays(tags.map(t => t.id), location.tagIds);
 
     return (
-        <Drawer
+        <DetailsSection
             title={name}
-            placement="right"
-            onClose={closeDrawer}
-            open={!!location}
-            closable={false}
-        >
-            <DrawerContent>
-                <DrawerBody>
+            selectedCount={selectedLocationIds.length}>
+                <DetailsSectionBody>
                     <WizardButtonContainer>
                         <Button type="primary" onClick={startWizard}>
                             Wizard
@@ -105,17 +114,16 @@ export const LocationDrawer = (props: ILocationDrawerProps) => {
                     />
 
                     {hasChanges &&
-                        <DrawerButtonContainer>
-                            <Button onClick={closeDrawer}>Cancel</Button>
+                        <DetailsSectionBodyButtons>
+                            <Button onClick={onCancel}>Cancel</Button>
                             <Button type="primary" onClick={updateLocation}>
                                 Save
                             </Button>
-                        </DrawerButtonContainer>}
-                </DrawerBody>
+                        </DetailsSectionBodyButtons>}
+                </DetailsSectionBody>
                 
-                <DrawerFooter>
-                    <Divider />
-                    <DrawerButtonContainer>
+                <DetailsSectionFooter>
+                    <DetailsSectionFooterButtons>
                         <Button icon={<FolderOpenOutlined />} onClick={() => openDirectory(location!)} >
                             Open location
                         </Button>
@@ -124,10 +132,9 @@ export const LocationDrawer = (props: ILocationDrawerProps) => {
                             danger>
                             Remove location
                         </Button>
-                    </DrawerButtonContainer>
-                </DrawerFooter>
-            </DrawerContent>
-        </Drawer>
+                    </DetailsSectionFooterButtons>
+                </DetailsSectionFooter>
+        </DetailsSection>
     );
 }
 

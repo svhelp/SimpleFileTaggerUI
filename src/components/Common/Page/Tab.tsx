@@ -9,6 +9,7 @@ interface ITabProps {
     isFetching?: boolean;
     isError?: boolean;
     error?: FetchBaseQueryError | SerializedError;
+    hasDetails?: boolean;
     children: React.ReactNode;
 }
 
@@ -16,7 +17,7 @@ export const Tab: FC<ITabProps> = (props) => {
     const errorMessage = getErrorMessage(props.error);
 
     return (
-        <TabContainer>
+        <TabContainer hasDetails={props.hasDetails}>
             {props.isFetching && <Skeleton.Image active />}
 
             {props.isError && <Alert

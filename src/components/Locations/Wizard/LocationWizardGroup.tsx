@@ -5,7 +5,7 @@ import styled from "styled-components";
 import {
     WarningOutlined,
   } from '@ant-design/icons';
-import { LocationWizardTagCard } from "./LocationWizardTagCard";
+import { TagCard } from "components/Tags/TagCard";
 
 interface ILocationWizardGroupProps {
     groupName: string;
@@ -39,7 +39,7 @@ export const LocationWizardGroup = (props: ILocationWizardGroupProps) => {
             </LocationWizardGroupHeaderContainer>
             <Space wrap>
                 {shownTags.map(tag => 
-                    <LocationWizardTagCard
+                    <TagCard
                         key={tag.id}
                         tag={tag}
                         isSelected={selectedTags.includes(tag.name)}

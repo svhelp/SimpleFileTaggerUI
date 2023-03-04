@@ -1,23 +1,20 @@
 import { Button, Checkbox } from "antd"
 import {
-    EditOutlined,
     DeleteOutlined,
     WarningOutlined,
     FolderOpenOutlined,
   } from '@ant-design/icons';
 import { LocationCardContainer, LocationNameContainer, LocationToolbar } from "./LocationContainer.styles";
-import { CheckboxChangeEvent } from "antd/lib/checkbox";
 import { useSingleAndDoubleClick } from "customHooks/useSingleAndDoubleClick";
 import { LocationPlainModel } from "domain/models";
 
 interface ILocationContainerProps {
-    isSelected?: boolean;
     location: LocationPlainModel;
-    onSelect?: (e: CheckboxChangeEvent) => void;
+    isSelected?: boolean;
+    isSelectionActive?: boolean;
     onClick: (location: LocationPlainModel) => void;
     onDoubleClick?: (location: LocationPlainModel) => void;
     onOpen?: (location: LocationPlainModel) => void;
-    onEdit?: (location: LocationPlainModel) => void;
     onRemove?: (location: LocationPlainModel) => void;
 }
 
@@ -33,8 +30,8 @@ export const LocationContainer = (props: ILocationContainerProps) => {
 
     return (
         <LocationCardContainer hoverable>
-            {props.onSelect &&
-                <Checkbox checked={props.isSelected} onChange={props.onSelect} /> }
+            {props.isSelectionActive &&
+                <Checkbox checked={props.isSelected} /> }
 
             <LocationNameContainer onClick={onLocationClick}>
                 <p>
@@ -48,11 +45,6 @@ export const LocationContainer = (props: ILocationContainerProps) => {
                 {props.onOpen &&
                     <Button type="text" onClick={() => props.onOpen?.(location)}>
                         <FolderOpenOutlined />
-                    </Button>}
-                
-                {props.onEdit &&
-                    <Button type="text" onClick={() => props.onEdit?.(location)}>
-                        <EditOutlined />
                     </Button>}
                 
                 {props.onRemove &&

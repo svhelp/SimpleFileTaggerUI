@@ -1,17 +1,16 @@
-import { TagContainer } from 'components/Common/Tag/TagContainer';
-import { TagPlainModel } from "domain/models";
 import { useThumbnailGetQuery } from "api/enchanced/thumbnail";
-import { CheckboxChangeEvent } from 'antd/lib/checkbox';
+import { TagContainer } from "components/Common/Tag/TagContainer";
+import { TagPlainModel } from "domain/models";
 
 interface ITagCardProps {
     tag: TagPlainModel
     isSelected: boolean;
-    onSelect?: (e: CheckboxChangeEvent) => void;
-    setSelectedTag: () => void;
+    isSelectionActive: boolean;
+    onClick: () => void;
 }
 
 export const TagCard = (props: ITagCardProps) => {
-    const { tag, isSelected, onSelect, setSelectedTag } = props;
+    const { tag, isSelected, isSelectionActive, onClick } = props;
 
     const { data: thumbnail, isFetching, isError, error } = useThumbnailGetQuery({ id: tag?.id });
 
@@ -21,7 +20,7 @@ export const TagCard = (props: ITagCardProps) => {
             title={tag.name}
             background={thumbnail?.image}
             isSelected={isSelected}
-            onSelect={onSelect}
-            onClick={setSelectedTag} />
+            isSelectionActive={isSelectionActive}
+            onClick={onClick} />
     )
 }

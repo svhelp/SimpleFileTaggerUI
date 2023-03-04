@@ -1,12 +1,12 @@
-import Checkbox, { CheckboxChangeEvent } from "antd/lib/checkbox";
+import { Checkbox } from "antd";
 import { TagBackground, TagCardContainer, TagNameContainer } from "./TagContainer.styles"
 
 interface ITagContainerProps {
     title: string;
     background?: string;
     isSelected?: boolean;
-    onSelect?: (e: CheckboxChangeEvent) => void;
-    onClick?: () => void;
+    isSelectionActive?: boolean;
+    onClick: () => void;
 }
 
 export const TagContainer = (props: ITagContainerProps) => {
@@ -19,10 +19,12 @@ export const TagContainer = (props: ITagContainerProps) => {
             </TagNameContainer>
 
             {!!props.background &&
-                <TagBackground src={`data:image/jpeg;base64,${props.background}`} />}
+                <TagBackground
+                    isSelected={props.isSelected}
+                    isSelectionActive={props.isSelectionActive}
+                    src={`data:image/jpeg;base64,${props.background}`} />}
 
-            {props.onSelect &&
-                <Checkbox checked={props.isSelected} onChange={props.onSelect} /> }
+            <Checkbox checked={props.isSelected} />
         </TagCardContainer>
     )
 }

@@ -1,7 +1,14 @@
 import styled from "styled-components";
 
-export const TabContainer = styled.div`
+interface ITabContainerProps {
+    hasDetails?: boolean;
+}
+
+export const TabContainer = styled.div<ITabContainerProps>`
     height: 100%;
+    padding: 24px;
+    width: ${({hasDetails}) => hasDetails ? "calc(100% - 350px)" : "100%"};
+
     display: flex;
     flex-direction: column;
 `

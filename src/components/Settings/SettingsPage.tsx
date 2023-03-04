@@ -1,8 +1,8 @@
 import { Button } from "antd"
 import { useImportDirectoryPatchMutation } from "api/enchanced/settings"
-import { Tab } from "components/Common/Tab/Tab"
-import { TabContentContainer } from "components/Common/Tab/Tab.styles"
-import { TabHeader } from "components/Common/Tab/TabHeader"
+import { Tab } from "components/Common/Page/Tab";
+import { TabContentContainer } from "components/Common/Page/Tab.styles"
+import { TabHeader } from "components/Common/Page/TabHeader";
 import { useQueryResult } from "customHooks/useQueryResult";
 
 export const SettingsPage = () => {
