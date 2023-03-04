@@ -6,7 +6,7 @@ interface ITagCardProps {
     tag: TagPlainModel
     isSelected: boolean;
     isSelectionActive: boolean;
-    onClick: () => void;
+    onClick: (e: React.MouseEvent) => void;
 }
 
 export const TagCard = (props: ITagCardProps) => {

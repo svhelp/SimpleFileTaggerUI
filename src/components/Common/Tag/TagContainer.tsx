@@ -6,7 +6,7 @@ interface ITagContainerProps {
     background?: string;
     isSelected?: boolean;
     isSelectionActive?: boolean;
-    onClick: () => void;
+    onClick: (e: React.MouseEvent) => void;
 }
 
 export const TagContainer = (props: ITagContainerProps) => {

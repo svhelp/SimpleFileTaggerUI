@@ -15,11 +15,20 @@ import { TagContainer } from "components/Common/Tag/TagContainer";
 
 export const GroupsPage = () => {
     
-    const [ selectedGroups, setSelectedGroups, clearSelection ] = useSelectedItems();
+    const [ selectedGroups, toggleSelectedGroup, setSelectedGroups, clearSelection ] = useSelectedItems();
     const [ isCreatingGroup, setIsCreatingGroup ] = useState(false);
 
     const { data: tagGroups, isFetching, isError, error } = useGetVirtualRemovable(useTagGroupGetQuery);
     
+    const onGroupClick = (e: React.MouseEvent, groupId: string) => {
+        if (e.ctrlKey) {
+            toggleSelectedGroup(groupId);
+            return;
+        }
+
+        setSelectedGroups(groupId);
+    }
+
     return (
         <PageContainer>
             <Tab isError={isError} isFetching={isFetching} error={error} hasDetails>
@@ -36,7 +45,7 @@ export const GroupsPage = () => {
                                 key={tagGroup.id}
                                 title={tagGroup.name}
                                 isSelected={selectedGroups.includes(tagGroup.id)}
-                                onClick={() => setSelectedGroups(tagGroup.id)} />)}
+                                onClick={(e) => onGroupClick(e, tagGroup.id)} />)}
                         <TagNewCard onClick={() => setIsCreatingGroup(true)}/>
                     </Space>
 

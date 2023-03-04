@@ -4,19 +4,12 @@ const delay = 200;
 
 export const useSingleAndDoubleClick = (
     actionSingleClick: () => void,
+    actionControlClick?: () => void,
     actionDoubleClick?: () => void,
     ) => {
         const [click, setClick] = useState(0);
 
         useEffect(() => {
-            if (!actionDoubleClick){
-                if (click === 1) {
-                    actionSingleClick();
-                }
-                
-                return;
-            }
-
             const timer = setTimeout(() => {
                 if (click === 1) {
                     actionSingleClick();
@@ -26,11 +19,25 @@ export const useSingleAndDoubleClick = (
             }, delay);
 
             if (click === 2) {
-                actionDoubleClick();
+                actionDoubleClick?.();
             }
 
             return () => clearTimeout(timer);
         }, [click]);
 
-        return () => setClick(prev => prev + 1);
+        const onClick = (e: React.MouseEvent) => {
+            if (!!actionControlClick && e.ctrlKey){
+                actionControlClick();
+                return;
+            }
+
+            if (!actionDoubleClick){
+                actionSingleClick();
+                return;
+            }
+
+            setClick(prev => prev + 1);
+        }
+
+        return onClick;
 }

@@ -13,6 +13,7 @@ interface ILocationContainerProps {
     isSelected?: boolean;
     isSelectionActive?: boolean;
     onClick: (location: LocationPlainModel) => void;
+    onCtrlClick?: (location: LocationPlainModel) => void;
     onDoubleClick?: (location: LocationPlainModel) => void;
     onOpen?: (location: LocationPlainModel) => void;
     onRemove?: (location: LocationPlainModel) => void;
@@ -23,6 +24,9 @@ export const LocationContainer = (props: ILocationContainerProps) => {
 
     const onLocationClick = useSingleAndDoubleClick(
         () => props.onClick(location),
+        !!props.onCtrlClick
+            ? () => props.onCtrlClick?.(location)
+            : undefined,
         !!props.onDoubleClick
             ? () => props.onDoubleClick?.(location)
             : undefined

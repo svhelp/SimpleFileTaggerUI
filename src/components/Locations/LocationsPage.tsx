@@ -25,7 +25,7 @@ export const LocationsPage = () => {
 
     const { data, isFetching, isError, error } = useGetVirtualRemovable(useLocationAllQuery);
     
-    const [ selectedLocations, setSelectedLocations, clearSelection ] = useSelectedItems();
+    const [ selectedLocations, toggleSelectedLocation, setSelectedLocations, clearSelection ] = useSelectedItems();
 
     const onViewTypeChange = (e: RadioChangeEvent) => {
         setViewType(e.target.value);
@@ -54,11 +54,13 @@ export const LocationsPage = () => {
                         ? <LocationsTreeContent
                             locations={data ?? []}
                             selectedLocations={selectedLocations}
+                            toggleSelectedLocation={toggleSelectedLocation}
                             setSelectedLocations={setSelectedLocations}
                             clearSelection={clearSelection} />
                         : <LocationsListContent
                             locations={data ?? []}
                             selectedLocations={selectedLocations}
+                            toggleSelectedLocation={toggleSelectedLocation} 
                             setSelectedLocations={setSelectedLocations} />}
                 </TabContentContainer>
 

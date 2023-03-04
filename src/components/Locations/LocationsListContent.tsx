@@ -9,6 +9,7 @@ import { usePerformRecoursiveAction } from "customHooks/usePerformRecoursiveActi
 interface ILocationsListContentProps {
     locations: LocationPlainModel[];
     selectedLocations: string[];
+    toggleSelectedLocation: (elementId: string) => void;
     setSelectedLocations: (elementId: string) => void;
 }
 
@@ -16,6 +17,7 @@ export const LocationsListContent = (props: ILocationsListContentProps) => {
     const {
         locations,
         selectedLocations,
+        toggleSelectedLocation,
         setSelectedLocations,
     } = props;
 
@@ -41,6 +43,7 @@ export const LocationsListContent = (props: ILocationsListContentProps) => {
                     location={l}
                     isSelected={selectedLocations.includes(l.id)}
                     onClick={() => setSelectedLocations(l.id)}
+                    onCtrlClick={() => toggleSelectedLocation(l.id)}
                     onDoubleClick={openDirectory}
                     onOpen={openDirectory}
                     onRemove={removeLocation}

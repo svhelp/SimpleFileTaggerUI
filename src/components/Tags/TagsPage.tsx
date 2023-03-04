@@ -16,13 +16,22 @@ import { TagCard } from "./TagCard";
 export const TagsPage = () => {
     const [ isCreatingTag, setIsCreatingTag ] = useState(false);
     const [ isMergingTags, setIsMergingTags ] = useState(false);
-    const [ selectedTags, setSelectedTags, clearSelection ] = useSelectedItems();
+    const [ selectedTags, toggleSelectedTag, setSelectedTags, clearSelection ] = useSelectedItems();
 
     const { data: availableTags, isFetching, isError, error } = useGetVirtualRemovable(useTagGetQuery);
 
     const closeMergingDialog = () => {
         setIsMergingTags(false);
         clearSelection();
+    }
+
+    const onTagClick = (e: React.MouseEvent, tagId: string) => {
+        if (e.ctrlKey) {
+            toggleSelectedTag(tagId);
+            return;
+        }
+
+        setSelectedTags(tagId);
     }
 
     return (
@@ -48,7 +57,7 @@ export const TagsPage = () => {
                                 tag={tag}
                                 isSelected={selectedTags.includes(tag.id)}
                                 isSelectionActive={selectedTags.length > 0}
-                                onClick={() => setSelectedTags(tag.id)} />)}
+                                onClick={(e) => onTagClick(e, tag.id)} />)}
                         <TagNewCard onClick={() => setIsCreatingTag(true)}/>
                     </Space>
                 </TabContentContainer>

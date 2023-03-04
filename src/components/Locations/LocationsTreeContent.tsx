@@ -11,6 +11,7 @@ import { usePerformRecoursiveAction } from "customHooks/usePerformRecoursiveActi
 interface ILocationsTreeContentProps {
     locations: LocationPlainModel[];
     selectedLocations: string[];
+    toggleSelectedLocation: (elementId: string) => void;
     setSelectedLocations: (elementId: string) => void;
     clearSelection: () => void;
 }
@@ -19,6 +20,7 @@ export const LocationsTreeContent = (props: ILocationsTreeContentProps) => {
     const {
         locations,
         selectedLocations,
+        toggleSelectedLocation,
         setSelectedLocations,
         clearSelection,
     } = props;
@@ -71,6 +73,7 @@ export const LocationsTreeContent = (props: ILocationsTreeContentProps) => {
                     location={l}
                     isSelected={selectedLocations.includes(l.id)}
                     onClick={() => setSelectedLocations(l.id)}
+                    onCtrlClick={() => toggleSelectedLocation(l.id)}
                     onDoubleClick={onTabClick}
                     onOpen={openDirectory}
                     onRemove={removeLocation}
